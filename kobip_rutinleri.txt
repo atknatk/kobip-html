@@ -1,0 +1,1175 @@
+﻿Kobip İşleyiş Rutinleri
+==============
+	01- Firma kayıt ve üyelik durumu
+	02- Firma bilgileri yönetimi
+	03- Çalışan üyelik durumu
+	04- Partnerler ve yönetimi
+	05- Satınalma ilan ekleme/görüntüleme/mesajlaşma ve yönetimi
+	06- Satış ilan görüntüleme/mesajlaşma ve yönetimi
+	07- Harcama yönetimi
+	08- Kategori Yönetimi - ?
+	09- Hesap kurtarılması ve şifre yenileme
+	10- Yardımcı ve Yetkileri
+	97- İşleyişler
+	98-KOBIP Dökümantasyon
+	Sözlük
+-----------------------------------------------------------------------------------------------------------------------------------------
+		1- Firma Kayıt, Üyelik Çeşitleri ve Rolleri
+			a- İlk Kayıt ve Üyeliği Başlangıcı
+				a1- Üye olmak isteyen firma anasayfa ya da uygun linkten kayıt sayfasına ulaşır. 
+						/* 
+						** Kobip üyeliği ücretsiz olduğu vurgulanmalı (Ücretsiz Kaydol / Join Free gibi link isimleri ile)
+						** Kayıt sayfası üye işlemlerini en hızlı ve zahmetsiz şekilde tamamlayacak şekilde tasarlanmalıdır.
+						** Kayıt sayfasında gözü yoracak ayrıntı ve gereksiz yazılar olmamalıdır.
+						** Uyarılar/Bilgilendirmeler/Hatalar sadece gerekli olduğunda ya da yanlış yapıldığında gösterilmelidir.
+						** Ayrıntılı formlar ve zahmetli üyelik süreçleri kişileri kaçırmaktadır. 
+						** Bilgi paketleri parça parça ve kişiyi yormadan ve gerekli olduğu anda alınmaya çalışılmalıdır. 
+						** İlk kayıt için istenenler:
+																I- Firma Yerel Kısa İsmi 
+																II- Firma E-posta Adresi
+																III- Şifre Belirleme (tek satır)
+																IV- Firma Şehri * Bu bilgi ile Google map scripti ile firmanın eyaleti ve ülkesi bulunacak *
+																V- Firma Vergi Numarası (firmanın tekillik kontrolü burada yapılıyor.)
+																VI- Kullanıcı Kişi İsmi
+						** Firma Kullanıcı Sözleşmesini onaylı olarak görür. 
+						** Sözleşme linkini tıklarsa sözleşme metnini sayfada modal olarak görüntüleyebilir.
+						** Sözleşmeler güncellendikçe admin kullanıcılara yeni sözleşme onaylatılır. Onay oluşmazsa firma sınırlanabilir.
+						** Pek çok kullanıcı bu sözleşmeyi hiç açmayacaktır.
+						*/
+				a2- Firmanın kaydı için 6 alanın özellikleri ve davranışları
+					a2a- Firma Kısa İsmi Alanı (text) (max-length: 40char)
+							/* 
+							** İlk kayıtta firma yerel kısa ismi ve sayı ile girilecektir. 
+							** Not: sadece yerel ismin sorulma sebebi sadece yerel ticaret yapmak isteyen firma olabilir.
+							** Kullanıcı max-length degerini aşarsa harf otomatik silinecek ve uyarı mesajı görünecek
+							*/
+					a2b- Firma E-posta Adresi (email) (max-length: 200char)
+							/* 
+							** E-posta doğrulama yapılacak hata durumunda kullanıcı uyarılacak
+							** Kişi kaydolduktan sonra email aktivasyonu için süre verilecek (15 gün) ve giriş yaptığında uyarı mesajı verilir.
+							*/
+					a2c- Şifre Belirleme (password) (min-length: 6 max-length:40)
+							/* 
+							** Yeni sifre sadece harf ve sayılardan oluşturulabilecek 
+							** Şifre seçiminde kullanıcıyı onu yapma bunu yap gibi çok fazla kısıtlamıyoruz
+							** Minimum  6 haneli olmak üzere sadece harf, sayı ya da bunların karışımı olabilir
+							** Kullanıcı farklı karakter basar ya da limitleri geçerse uyarı mesajı görünecek
+							*/
+					a2d- Firma Şehri (google map auto-complete) + Otomatik Şehir Bul Butonu
+							/* 
+							** Kullanıcı firmanın şehrini seçtiğinde google api ile şehrin ingilizce ismini - eyaletini ve ülkesini alıyoruz.
+							** veritabanımıza bu şehrin/eyaletin/ülkenin bizim kayıtlı dillerimizdeki isimlerini yüklüyoruz.
+							** bu sayede firmalar eklendikçe bizim farklı dillerdeki şehir/eyalet/ülke veri tabanımız büyüyor.
+							** Otomatik Şehir Bul ikonu; eğer kullanıcı izin verirse google api yardımı ile kullanıcının giriş yaptığı
+							** şehri buluyor.
+							*/
+					a2e- Firma Vergi Numarası - UNIQUE [ülkekodu+vergi numarası]
+							/*
+							** Firma vergi numaraları tekildir ancak bu arama aynı ülke içinde geçerlidir.
+							** Farklı ülkelerde aynı vergi numarasını alan firmalar olabilir.
+							*/
+					a2f- Kullanıcı İsmi
+							/*
+							** Kullanıcı Adı, ortaadı ve soyadını tek bir input penceresine girer. Otomatik boşluklardan ayrıştırılır.
+							** Ali Sinan Aktaş
+							*/
+				a3- Kayıt Butonuna Basılması
+						/* 
+						** Javascript denetimleri olan sayfada alanlar hatasız ise ve şözleşme onaylı ise POST işlemi yapılır.
+						** Alınan veri SERVER tarafında yeniden yukarıdaki kriterlere göre denetlenir.
+						** Firma kaydı yapılan bilgisayarın IP adresi - Tarayıcı ismi ve kullandığı diller veri tabanına işlenir
+						** Kullanıcının bloklu IP den olup olmadığı tespit edilir ve gerekliyse kayıt işlemi sonlandırılır.
+						** IP adresinden kullanıcının lokasyonu daha sonra kontrol amacıyla tespit edilir
+						** IP adresleri bir iç denetim mekanizması için veri tabanında tutulur.
+						** Kullanıcı tarayıcı ve dil kullanımından ilerde yapılacak öneri ve reklam için veri toplanır.
+						** Başarılı firma kaydı sonrası, bize verdiği E-posta adresinden doğrulama yapması gerektiği mesajı gösterilir.
+						** Başarılı kayıt sonrası mesajlar pop-up ya da modal değil sayfa üzerinde 10 sn olarak görünür, daha sonra kullanıcı "Kobip Avantajlar" sayfasına yönlendirilir.
+						*/
+				a4- E-posta Onayı Prosedürü - (not: aktivasyon süreci 15 gün sürebilir)
+						/* 
+						** Kayıt sırasında verilen e-posta adresine basit formda bir aktivasyon linki gönderilir.
+						** Gönderilen E-postada Kobip'in temel avantajlarından biri vurgulanır.
+						** Aktivasyon Linkine tıklayan kullanıcıya "firma telefonu ve yerel mi uluslararası ticaret için mi kullanacağını soran" bir sayfa açılır.
+						** Bilgiler alındıktan sonra 15 gün içinde aktivasyon yapabilir. 
+						*/
+				a5- Kayıtlı Firma Kobip Onayı
+						/* 
+						** E-posta onayı olmadan 15 gün ve onaylı olarak sürekli firmalar işlemlerine devam edebilirler, ancak ayrıca Kobip ekibi tarafından kontrol edilebilir.
+						** Sakıncalı olduğu düşünülen firmalar (bilgileri düzeltmeleri için) dondurulabilir ya da tamamen silinebilir (Silinme işlemi silinme bayrağı ile yapılır).
+						** Dondurulmuş ya da silinmiş firma giriş denemesi yaptığında;
+						** 	dondurulmuş ise sebebini belirten ve düzeltmesi istenen mesajları görecekleri bir sayfaya yönlendilir.
+						** 	silinmiş ise giriş yapamaz (Sadece ana ekranda silindiği belirtilir).
+						** Veri tabanında kontrol edilmiş firmalar için "kontrol edilmiştir" anlamından bir alan bulununur. 
+						**
+						** Bu alan kimin ve ne zaman kontrol ettiğini tutar (bu alan ekip ile konuşulup prosedür ayrıntılı anlatılacaktır)
+						** 
+						*/
+
+			b- ROOT Çalışan Yetki Alanları
+				/*
+				** ROOT çalışan hiç silinemyecek ve yasal durumlarda kullanıcı giriş adı değiştirilebilecek olan çalışandır.
+				*/
+				b1- ROOT Çalışan Yetki Alanları - SINIRSIZ
+
+			c- Firma Hesabı Dondurma ve Silme
+				/*
+				** Firma Hesabı Dondurma/Silme talebi göndermeye tek yetkili ROOT kullanıcı hesabıdır.
+				** Uygun link ile firma hesabı silme talebi gönderir, Kobip bu talebi otomatik ya da manuel olarak tamamlar.
+				*/
+			d- Firmaların Kullanıcı Tipleri ve Yetkileri
+				d1- Root  Kullanıcısı - Hiç silinemeyen gerçek kişidir.
+						/*
+						** Bu hesabın amacı belli sebeplerden firmanın tüm kullanıcıları deaktif olduğunda:
+						** (örneğin firmaya mahkemeler ve güvenlik güçleri tarafından el konulur, kayyum atanır ya da savaş, kaza, afet vs sebeplerden tüm kullanıcılar hesaba ulaşamaz duruma gelir.
+						** bu gibi durumlarda firmaya yeni seçilen yetkili müdürleri "firma root hesabından" girerek eski kullanıcıları modifiye eder ya da yeni kullanıcı ekler.
+						** Çünkü firmada çalışan kullanıcılar hesaplarından kendi E-posta/ Tel gibi şahsına ait girilmesi/ulaşılması mümkün
+						** olmayan ve yasal olmayan kaynaklar ile eriştiklerinden, bu hesapları kullanmak mümkün olmayabilir.
+						** Bu gibi durumlarda root hesabı firma adına kullanılır ve bu çalışanlar için gerekli işlemler yapılır.)
+						** Firmanın tekrar hesap kontrolünü ele alması, eski kullanıcıları değiştirmesi, yeni kullanıcıları eklemesi sağlanır.
+						** Yine örnek vermek gerekirse tüm yetkileri olan ve tek olan firma yöneticisinin vefat etmesi halinde onun E-postasına girilmesi yasal değildir.
+						** Bu gibi durumlarda firma yasal yeni bir yönetici atar. Yeni yönetici firma adına başvurur ve kendi ya da yetkili bir başka çalışanı admin olarak atar.
+						** Aynı şekilde KOBIP hesabının kapatılması da firmada yetkili müdür ya da müdürlerin root hesabı firma adına kullanıp yapılır.
+						** Kısaca Root hesabı yeni çalışan ekler, mevcut çalışan yetkisi değiştirir, root kullanıcı adını değiştirir ve KOBIP hesabını kapatır.
+						** Bu aksiyonları sözleşme gereği sadece firma yetkisli müdür/müdürler yapabilir (Firma bunu sözleşmede beyan eder).
+						** KOBIP hesabı kapama ve root kullanıcı adı değiştirme ve firma vergi numarası değiştirmeye "TEK YETKİLİ" root hesabıdır.
+						** Diğer yetkiler çalışanlara verilebilir.
+						** Root kullanıcısının yaptığı eylemden firmanın yetkili müdür/müdürleri sorumludurlar (Bir firmada birden çok yetkili müdür olabilir.).
+						*/
+				d2- Çalışan Kullanıcıları - Gerçek kişilerdir yetkileri çerçevesinde eylem gerçekleştirirler.
+						/*
+						** Çalışan kullanıclar aktif eylem gerçekleştirebilen sorumlulardır. Sorumlulukları kendilerine yönetici tarafından verilen (ROOT ya da Adminler verebilir.) yetkiler çerçevesindedir.
+						** Çalışanlar KOBIP hesabı kapatamaz, root kullanıcı adını(e-posta) ve vergi numarasını değiştiremez.
+						** Çalışanları yaptıkları aktif eylem isimleri ve yaptıkları eylemler olarak işlem loglarında gösterilir.
+						** Örneğin Ali AKTAŞ kullanıcısı 15/09/2017 tarihinde A45ERT kodlu ilana teklif verdi gibi
+						** Çalışanlar bu log sayesinde yaptıkları eylemden sorumludurlar.
+						*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		2- Firma Bilgileri Yönetimi
+			a- Firma Bilgileri Değiştirme Yetkileri
+				/*
+				** Yönetici gurubu yetkileri verilmiş çalışanlar ROOT kullanıcı tekil yetkileri hariç bütün bilgileri değiştirebilir ve görüntüleyebilir.
+				** Diğer kullanıcılar firma bilgilerini, puanlarını görüntülüyebilirler. Ancak değişiklik yapamazlar. Firma bilgilerini görüntülüyemeyen kullanıcı yoktur. 
+				** Her kullanıcı üzerinde işlem yaptığı firmanın temel bilgilerini görüntüleme hakkına sahiptir.
+				*/
+			b- Firma Bilgileri
+				b1- Hem Yerel ve Uluslarası Ticaret Seçilmiş (Standart Durum) 
+					b1a- Temel Firma Bilgileri
+							/*
+							** Firma Logosu
+							** Firma hesabında ( ilk açılan ) kullanılan E-Posta adresi ve Telefonu (özeldir müşteriye gösterilmeyebilir)
+							** Firma Web Adresi 
+							** Firma Şehri (Buradan eyalet ve ülke seçiliyor)
+							** Firma Tipi (Gerçek Kişi / Tüzel Kişi)
+							** Firma Vergi Numarası
+							*/
+					b1b- Yerel Firma Bilgileri
+							/*
+							** Yerel Dilde Firma İsmi (Tam ve Legal Firma İsmi) - İlerde bu konuda belge istenebilir [süper onaylı firma]
+							** Yerel Dilde Kısa Firma İsmi (Firma ne ile anılmak isteniyorsa - max-length: 40 utf8 char)
+							** Yerel Firma Adresi ve Posta kodu (Toplam üç satırda alınacak - legal adres, her satır için max-length: 40 utf8 char)
+							** Yerel ticaret için firma E-posta Adresi (Opsiyonel)
+							** Yerel ticaret için firma Telefon (Opsiyonel)
+							*/
+					b1c- Uluslararası Firma Bilgileri
+							/*
+							** Latin harfleri ile ya da ingilizce Tam Firma İsmi
+							** Latin harfleri ile ya da ingilizce Kısa Firma İsmi (Firma ne ile anılmak isteniyorsa - max-length: 40 char)
+							** Latin harfleri ile ya da ingilizce ve Posta kodu (Toplam üç satırda alınacak - her satır için max-length: 40 utf8 char)
+							** Uluslararası ticaret için firma E-posta Adresi (Opsiyonel)
+							** Uluslararası ticaret için firma Telefon (Opsiyonel)
+							*/
+					b1d- Kobip için Firma Yetkilisi
+							/*
+							** Kobip firmaya çeşitli sebeplerden ulaşmak isteyebilir, karşısında firmayı temsilen iletişim kurması gereken muhattap bilgileri
+							** Kobip İletişim Yetkilisi İsmi (latin harfleri ile)
+							** Yetkili E-posta adresi
+							** Yetkili Telefon Numarası (sadece sayı ve + işareti)
+							*/
+					b1e- Satınalma Ayarları
+							/*
+							** Çok kullanılan birimler: en fazla 6 birim
+							** Ticarette farklı alanlarda farklı birimler kullanılmakta ve bir alanın birimi diğer iş kollarında neredeyse hiç kullanılmamakta
+							** Bu nedenle bir firma için çok kullanılan birimler listede öne çıkarılabilecek. Bu birimlerin sırası da kullanıcı tarafından değiştirilebilecek.
+							** Satınalma yapılacak ülkeler listesi - Belli ticaret topluluklarını da içerecek grupları seçebileceği (örn avrupa birliği) ülkeler listesi
+							** Bu liste çalşanların ülke seçimini de kısıtlayabilen temel seçimlerdir. (Otomatik seçim bütün ülkelerdir)
+							** İlk kayıtta bütün ülkelerin olduğu bu liste istenirse kısıtlanabilir.
+							** Firma kısıtlama yaptığında çalışanların listesinde ülkelerde eksilebilir, eğer yeni ülke eklenirse bütün çalışanlara eklenir.
+							*/
+					b1f- Satış Ayarları
+							/*
+							** Tıpkı satınalma ayarlarında olduğu gibi otomatik olarak tüm ülkelerin bulunduğu ve 
+							** kısıtlandığında tüm çalışanları kısıtlayan genel bir kısıtlamadır.
+							*/
+					b1g- Firma Hesabı Silme ve Dondurma Butonu*
+							/*
+							** Sadece temel firma hesabından giriş yapıldığında görüntülenebilen butonlardır. Firma hesabını silebilir ya da dondurabilir.
+							*/
+				b2- Yerel Ticaret Seçilmiş (Firma Sadece Yerel Ticaret Yapmak İstiyorsa)
+						/*
+						** B1A bölümü ile aynı ancak Uluslararası ticaret bilgileri bölümü küçültümüş ve 
+						** Kobip'in uluslarası ticaret konusunda avantajlarını anlatan küçük bir yazı olabilir.
+						*/
+			c- Firma Bilgileri Düzenleme
+				c1- Temel Firma Bilgileri Düzenleme
+						/*
+						** Firma Logosu eklemek ya da değiştirmek isteyen kullanıcı sağ üst köşede bulunan image_edit ikonuna tıklar.
+						** Logo datasını yüklemek üzere modal açılır. Modal üzerinde logosunu uygun boyutlarda seçer.
+						** HTML5 ile logo server için seçilen boyutlara düşürülerek base64 formatında gönderilir.
+						** Server tarafında yine logonun boyutları kontro edilir. Belirlenen oran ve boyuttan farklı ise kayıt işlemi yapılmaz.
+						** 
+						** Firmanın ilk kayıtta kullandığı ayrıca root hesabın adı olan bu E-Posta adresi sadece root hesap ile girildiğinde değiştirlebilir.
+						** Bu E-Posta hesabı değiştirildiğinde mutlaka aktivasyon E-Postası gönderilir. Aktivasyon E-Postası doğrulanmadan değişiklik gerçekleşmez.
+						**
+						** Firma root telefon bu telefon admin yetkili kişiler tarafından değiştirilir.
+						** Eğer yerel ve uluslarası ticaret için farklı telefon girilmemiş ise bu telefon numarası firma telefonu olarak gösterilir.
+						** Bu alan sadece sayılar ve + karakterini kabul eder. Bu alana telefon nosu kontrolü eklenebilir.
+						** 
+						** WEB alanı firma web sitesi eklenebilir, web link controlü yapılır. Hata durumunda uyarı mesajı çıkar.
+						** WEB alanı root ve admin tarafından düzenlenebilir. 
+						**
+						** Firma Şehri sadece root tarafından değiştirilebilir. Bu firmanın legal yapılanmasının bulunduğu, kayıtlı olduğu şehirdir.
+						** Google map API ile şehir/eyalet/ülke bulunur, Kobip dillerinde karşılıkları da bulunur.
+						** 
+						** Firma Tipi Sadece root tarafından değiştirilir. İki tip firma vardır: Gerçek Kişiler / Tüzel Kişiler
+						**
+						** Firma Vergi numarası sadece root tarafından değiştirilir. 
+						*/
+				c2- Yerel Firma Bilgileri Düzenleme
+						/*
+						** Yerel Dilde Firma İsmi (Tam ve Legal Firma İsmi) maksimum 150 uft8 char sayı girilebilir
+						** Yerel Dilde Kısa Firma İsmi (Firma ne ile anılmak isteniyorsa - max-length: 40 utf8 char)
+						** Yerel Firma Adresi ve Posta kodu (Toplam üç satırda alınacak - legal adres, her satır için max-length: 40 utf8 char)
+						** Postakodu sayı ve harf olabilir, bazı ülkelerde postakodunda harf var.
+						** Yerel ticaret için firma E-posta Adresi - edit sayafında linke tıklarsa alan görünecek ve firma isterse ekleyecek.
+						** Yerel ticaret için firma Telefon - edit sayafında linke tıklarsa alan görünecek ve firma isterse ekleyecek.
+						** Yerel firma bilgileri aynı ülkede faliyet gösteren firmalar o ülkenin yasal ve yaygın dilinde gösterilecek.
+						*/
+				c3- Uluslararası Firma Bilgileri Düzenleme
+						/*
+						** Latin harfleri ile ya da ingilizce Tam Firma İsmi - maksimum 150 char sayı girilebilir
+						** Sadece latin harfleri ile inglizce ismi de yazılabilir - firmanın uluslarası platforma anlaşılır olmasını sağlıyor.
+						** Latin harfleri ile Adresi ve Posta kodu (Toplam üç satırda alınacak - legal adres, her satır için max-length: 40 utf8 char)
+						** Postakodu sayı ve harf olabilir, bazı ülkelerde postakodunda harf var.
+						** Uluslararası ticaret için firma E-posta Adresi - edit sayafında linke tıklarsa alan görünecek ve firma isterse ekleyecek.
+						** Uluslararası ticaret için firma Telefon - edit sayafında linke tıklarsa alan görünecek ve firma isterse ekleyecek.
+						** Uluslarası firma bilgileri farklı ülkelerden partnerlere ve iletişim kuran firmalara gösterilecek.
+						*/
+				c4- Kobip için Firma Yetkilisi Düzenleme
+						/*
+						** B1D bölümünde anlatılmış
+						*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		3- Çalışan üyelik durumu
+			a- Çalışan Ekleme
+				/*
+				** Herhangi bir çalışan ekleme işlemi öncesi o e-posta hesabının bir kullanıcı hesabı olarak kullanılıp kullanılmadığı kontrol edilir.
+				*/
+				a1- İlk Çalışan Ekleme
+					/*
+					** Firma ilk üyeliği ROOT hesabı üzerinden yapılır.
+					** İşlem süreleri ve prosedürün uzamaması için anında ilk kullanıcı hesabı oluşturulur.
+					** Oluşturulan ilk kullanıcı için aktivasyon E-postası gönderilir.
+					** İlk kullanıcı Admin yetkileri vardır ve e-postasını aktive ettikten sonra kullanabilir.
+					*/
+				a2- Çalışan Ekleme
+					/*
+					** Çalışan bir e-posta adresi ile davet edilir.
+					** Davet edilen e-posta adresinden daha önce davet edilip edilmediği kontrol edilir.
+					** Davet edilen e-posta adresinin zaten aktif bir çalışanda olup olmadığı iş akışında kontrol edilir.
+					** İlk kullanıcının farklı eklenmesinden sonraki kullanıcılar E-posta adresleri üzerinden davet edilirler.
+					** Davet edilen kullanıcı E-postasına gönderilen linki tıkladıktan sonra, kendi bilgilerini ekleyeceği sayfaya yönlendilir.
+					** Zorunlu ve opsiyonel bilgilerin bulunduğu bu sayfadan sonra şifresini de belirleyerek, yetkileri çerçevesinde aktif çalışmaya başlar.
+					*/
+				a3- Çalışan Düzenleme
+					/*
+					** Çalışan düzenleme yetkileri olanlar, çalışan ekleyebilir, çalışanın departmanını değiştirebilir, yetkilerini değiştirebilir.
+					** Çalışan yetkilerinin kimin tarafından hangi yetkilerden hangi yetkilere değiştirildiği log kaydı altına alınır.
+					** Çalışanların kişisel bilgileri SADECE çalışanın kendisi tarafından değiştirilebilir. (fotoğraf, isim, kullanıcı adı vb.)
+					*/
+				a4- Çalışan Dondurma ve Silme
+					/*
+					** Çalışan Düzenleme yetkileri olanlar çalışanları dondurur (pasif duruma alır) ya da silebilir.
+					** Dondurma işlemi yapılan çalışanlar sadece kişisel bilgilerini görüntüleyebilir ya da değiştirebilirler.
+					** İlan veremez, mesaj atamaz, teklif veremezler.
+					** Firmalara ilgili olarak atanmışlar ise firmalar bu ilgili bilgilerini göremezler
+					** Silinen Çalışanın favori listesi kaldırılır. - OK
+					** Silinen Çalışanın bloklu ilan listesi de kaldırılır. - OK
+					** Silinen Çalışanın İlgili olarak atandığı partnerlerden kaldırılır.
+					*/
+				a5- Çalışan Bilgileri Transfer (Gelecek özellik)
+					/*
+					** Firmadan bir çalışan ayrılmış ise, onun tüm atandığı ilanlar ve ilgili olduğu şirketlere yeni çalışanın transfer edilmesidir.
+					*/
+				a6- Çalışan Listesi ve Çalışan Bilgi Kartı
+					/*
+					** Çalışan Listesi alt alta sıralanmış çalışan kartlarından oluşur.
+					** Maksimum 20 çalışan eklenebilir.
+					** Filtre yoktur. (İlerde departman için performanslar görüntülenebilir)
+					** Çalışan Bilgi kartlarında çalışanın fotoğrafı, departmanı, yetkileri , firmaiçi e-posta adresi, telefonu, mobil telefonu
+					** ve müşteriler için kullandığı E-posta adresleri görüntülenebilir.
+					** Çalışan düzenlemeye yetkili kişiler bu bölümün ayar kısmından yetkilerini ve departmanını değiştirebilirler. (örneğin IK departmanı)
+					*/
+			b- Çalışan Kişisel Sayfası/Düzenleme
+				b1- Kişisel Sayfa Bilgileri
+					/*
+					** Çalışanlar kişisel bilgilerini SADECE kendileri düzenlerler.
+					*/
+					b1a- Temel Kişi Bilgileri
+							/*
+							** Kişi Fotoğrafı
+							** Kişi Adı Soyadı (Yerel ya da Uluslarası) 
+							** Kişi Departmanı
+							** Kişi hesabında kullanılan E-Posta adresi ve Telefonu
+							*/
+					b1b- Yerel Kişi Bilgileri
+							/*
+							** Yerel Dilde Müşteriye Gösterilecek Kişi İsmi (Kişi ne ile anılmak isteniyorsa - max-length: 40 utf8 char)
+							** Yerel Kişi Sabit Telefonu (Opsiyonel)
+							** Yerel Kişi Mobil Telefonu (Opsiyonel)
+							** Yerel Satınalma için kişi E-posta Adresi (Opsiyonel) - sadece satış yetkisi varsa hiç gösterilmeyebilir
+							** Yerel Satış için kişi E-posta Adresi (Opsiyonel) - sadece satınalma yetkisi varsa hiç gösterilmeyebilir
+							*/
+					b1c- Uluslararası Kişi Bilgileri  (Hem Yerel ve Uluslarası Ticaret Seçilmiş)
+							/*
+							** Latin harfleri ile Müşteriye Gösterilecek Kişi İsmi (Kişi ne ile anılmak isteniyorsa - max-length: 40 utf8 char)
+							** Uluslararası Kişi Sabit Telefonu (Opsiyonel)
+							** Uluslararası Kişi Mobil Telefonu (Opsiyonel)
+							** Uluslararası Satınalma için kişi E-posta Adresi (Opsiyonel) - sadece satış yetkisi varsa hiç gösterilmeyebilir
+							** Uluslararası Satış için kişi E-posta Adresi (Opsiyonel) - sadece satınalma yetkisi varsa hiç gösterilmeyebilir
+							*/
+					b1e- Satınalma Ayarları
+							/*
+							** EKLENECEK
+							** Satınalma yapılacak ülkeler listesi - Belli ticaret topluluklarını da içerecek grupları seçebileceği (örn avrupa birliği) ülkeler listesi
+							** Firma Ülke listesi çalşanların ülke seçimini de kısıtlayabilen temel seçimlerdir. (Otomatik seçim bütün ülkelerdir)
+							** İlk kayıtta firmanın seçitiği bütün ülkelerin olduğu bu liste istenirse kısıtlanabilir.
+							** Firma kısıtlama yaptığında çalışanların listesinde ülkelerde eksilebilir, eğer yeni ülke eklenirse bütün çalışanlara eklenir.
+							*/
+					b1f- Satış Ayarları
+							/*
+							** EKLENECEK
+							** Tıpkı satınalma ayarlarında olduğu gibi otomatik olarak tüm ülkelerin bulunduğu ve 
+							** kısıtlandığında tüm çalışanları kısıtlayan genel bir kısıtlamadır.
+							*/
+					b1g- Kişi Hesabı Silme ve Dondurma
+							/*
+							** Kişi hesabını sadece yetkili adminler silip dondurabilir.
+							*/
+				b2- Kişisel Sayfa Düzenleme
+					/*
+					** Çalışanlar departmanlarına göre gösterilecek sayfaların ya da filtrelerin nasıl uyulanacağını değiştirebilirler.
+					** Çalışanlar kişisel bilgilerini SADECE kendileri düzenlerler.
+					*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		4- Partnerler ve Yönetimi
+			a- Partner Ekleme
+				/*
+				** Adminler, satınalma yetkileri olanlar ve satış yetkileri olanlar ilanlar üzerinden partner ekleyebilirler.
+				** Davetleri kabul edebilirler
+				** Bütün kullanıcılar E-posta yolu ile partner davet edebilir
+				** Kimin ne zaman hangi firmaları davet ettiği ile ilgili bir log tutulabilir.
+				** Tutulan log belki ayrıntılı rapor olarak talep edilirse görüntülenebilir.
+				*/
+				a1- Partner Davet Etme Kutusu
+					/*
+					** Partner sayfasının üst kısmında karşı firmanın genel E-posta adreslerinden birini girip
+					** hangi iletişim bilgilerini göstreceğini ve isterse firma ilgilisini seçer.
+					** Bütün kullanıcılar E-posta daveti gönderebilir.
+					** Not: Firma KOBIP'e üye değilse davet E-postası gönderilebilir.
+					** firma ROOT kullanıcı hesabı da partnerlik tespitinde kullanılabilir.
+					** Contact list ya da excel olarak partner davet yönetmi açılabilir
+					*/
+				a2- Satınlama İlanı Üzerinden Davet 
+					/*
+					** Sadece Admin, satınalma ve satış yetkileri olanlar davet gönderebilir.
+					** Satınalma ilanı sağ kutucukta firma partner değilse ikon görünecektir.
+					*/
+			b- Partner Bilgileri Görüntüleme
+				/*
+				** Bütün kullanıcılar partnerleri ve bilgilerini görebilirler.
+				*/
+			c- Partner Düzenleme
+				/*
+				** Adminler, satınalma yetkileri olanlar ve satış yetkileri olanlar ilanlar üzerinden partner düzenleme yapabilirler
+				*/
+			d- Partner Bilgi Kartı ve Filtreler
+				/*
+				** 
+				*/
+				d1- Filtre Arama Alanları
+				/*
+				** Partner filtreleri pek çok partner arasından uygun seçimleri yapmasına yarar. Metin giriş alanı diğer alanlardan etkilenmeden arama yapar.
+				** Örneğin ismi "ac" ile başlayan ve Almanya da bulunan firmaları aramak isteyen çalışan,
+				** önce ülke filtresinden Almanyayı sonra input alanından "ac" girişi yapabilir. Ya da önce text girişi sonra ülke filtesi uygular.
+				*/
+					d1a- Text Arama Alanı
+						/*
+						** Ülke yerel adı, Latince harf ile adı (sadece kısa adları arasından)  kullanıcı dilinde kategori ismi  (Sayfa türkçe ise Türkçe)
+						*/
+					d1b- Ülke Filtresi - (Select Alanı)
+					d1c- AZ Sıralama Butonu
+					d1d- Partnerleri Göster Butonu
+					d1e- Davet Eden Firmalar Butonu
+					d1f- Davet Edilen Firmalar Butonu
+					d1g- Bloklanan Firmalar Butonu
+					d1h- Filtreleri Temizle
+				d2- Partner Bilgi Kartı
+					/*
+					** Partner Bilgi kartları sayfada çok yer kaplamaması kullanıcının kolayca görmesi için farklı modlarda görüntülenir.
+					*/
+					d2a- PBK Basit Mod
+						/*
+						** Listelemeler Bu modda yapılır.
+						** Eğer partner firma ile asıl firma aynı ülkede ise partner firmanın yerel kısa ismi görünür.
+						** Eğer firma ülkeleri farklı ise firmanın latin harfleri ile kısa ismi görünür
+						** Firmanın Puanı görünür.
+						** Firmanın Ülkesi görünür
+						** Sağ kenarda bulunan ayar ikonuna tıklanırsa firma ile ilgli ayarlar bölümü alta doğru genişler
+						** Basit mod kutucuğuna tıklanırsa genişletilmiş firma bilgi kartı açılır.
+						*/
+					d2b- PBK Ayar modu
+						/*
+						** Ayar ikonuna tıklayarak görünür hale getirdiğiniz ayar modunda Firmaya göstereceğiniz;
+						** İletişim Bilgilerinizi, Firma İlgilsini değiştirebilirsiniz ya da atanmamış ise atayabilirsiniz.
+						** Partneri Bloklayabilirsiniz. 
+						** Partneri Silebilirsiniz
+						** Partneri Şikayet edebilirsiniz (Report)
+						*/
+					d2c- PBK Genişletilmiş Bilgi Kartı Modu
+						/*
+						** Basit Mod kartı üzerine tıklanarak genişletilir. tekrar tıklanırsa kapatılır.
+						** Firma Aynı ülkede ise Yerel Tam İsim, Adres ve Atanmış ise İlgili Bilgileri Görünür.
+						** Eğer İlgili Atanmamış ise Firmanın Yerel ya da Uluslararası genel iletişim Bilgileri Görüntülenir.
+						** Not: Hangi iletişim bilgilerini göstereceği ayrıca ayarlar Bölümünden seçilir.
+						** Partner Firmanın satış yaptığı kategoriler listesi görünür.
+						*/
+				d3- Davet Edilen ve Davet Eden Firma Bilgileri
+					/*
+					** Davet edilen ve davet eden firma kartları Basit Mod ile çok benzerdir.
+					** Firma ismi, puan ve ülke birebir aynıdır.
+					** Kutucuğa tıklama ile herhangi bir genişleme olmaz
+					*/
+					d3a- Davet Edilen Firma Kartı
+						/*
+						** Katın Sağ bölümünden davet ettiğiniz firmayı;
+						** bloklayabilirsiniz
+						** daveti silebilirsiniz
+						** Yaptığınız davet 90 gün içerisinde kabul edilmezse otomatik olarak silinir.
+						*/
+					d3b- Davet Eden Firma Kartı
+						/*
+						** Katın Sağ bölümünden davet eden firmayı;
+						** partner olarak ekleyebilirsiniz
+						** bloklayabilirsiniz
+						** silebilirsiniz
+						** Davet 90 gün içerisinde kabul dilmezse otomatik olarak silinir.
+						*/
+				d4- Bloklu Firma Kartı
+					/*
+					** Daha önce çeşitli sebeplerden firma tarafından bloklanmış firmaları gösteririlir
+					** Kartın sağ bölümünden Bloğu kaldırabilir.
+					** Partner olarak eklemek istiyorsa mutlaka davetiye göndermeli ya da almalıdır.
+					*/
+				d5- Silinmiş Firmaların Partner Yordamları
+					/*
+					** Firmaların partner listesinden kaldırılması - OK
+					*/
+				d6- Firma Çalışanının Silinmesi Durumda Partner ilgilisi Yordamı
+					/*
+					** Firma bir çalışanı sildiğinde çalışanın ilgili olarak atandığı partner listelerinden silinmesi - OK
+					*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		5- Satınalma ilan ekleme/görüntüleme/mesajlaşma ve yönetimi
+			/* 
+			** HEDEFLER
+			** @	Satınalma ilanı kullanıcıyı hızlıca ilan verebilecek şekilde minimum bilgi girişi ile olabilmeli:
+			**  	Sadece ilan başlığı, miktar ve birim (Adet otomatik seçim muhtemelen bunu bile değiştirmeyecek.)
+			** 	Yukarıdaki üç giriş ile ilan verilebilmeli böylece detay veremeyecek kadar cahil ya da girdiye ihtiyacı olman müşteriler de ilan verebilmeli.
+			** @	Satınalma ilanı detaylı bilgi girişi yapmak isteyen müşteriyi de memnun etmelidir.
+			**		İlan verilecek ülkeler, ilan detayları, görseller, nakliye şekilleri ve pek çok ayrıntıyı müşteri ilana eklemek isteyebilir.
+			** 	Bu detaylar alıcı ve satıcının minimum müzakere ederek anlaşmasını sağlar. Satıcıya alıcı konusunda güven verir.
+			** @	Veri girdileri ilan ön gösterimi üzerinden inline edit ile yapılabilecek, 
+			**		böylece kullanıcı ilanının satış yapacak firma tarafından nasıl göründüğünü bilecek.
+			**
+			** GENEL BİLGİLER
+			** Satınalma ilanı firma içerisinde "satınalma ilanı verme yetkisi olan" çalışanlar tarafından verilebilir. 
+			** ROOT (Firma) kullanıcısı satın alma ilanı veremez.
+			** ROOT'un satınalma ilanı verememe sebebi firmanın aktif eylem gerçekleştirecek organları olmamasıdır.
+			** Satınalma ilanı görüntüleme yetkisi olan kişiler tarafından görüntülenir.
+			** Teklif güncelleme sebepleri veritabanında tututlur.
+			** 
+			*/
+			a- Satınalma İlanı Verme
+				/* 
+				** Satınalma ilanı vermek için kullanıcının, firmanın ve Kobip'in belirlediği otomatik ayarlar önceden kurulmuş olarak gelir.
+				** Satınalma ilanı vermek için minimum "İlan Başlığı, Ürün miktarı/adedi, Birim" Alanları doldurulmalıdır.
+				*/
+				a1- Genel Bilgiler Tab'ı
+					/*
+					** Bir kısmı otomatik olarak doldurulan ancak doldurulması gerekli minimum bilgilerin bulunduğu kısımdır.
+					** İlan başlığı, miktar (adet) ve Ürün birimi minimum doldurulmalıdır. (Adet default ürün birimidir)
+					** İlanın Başlık kısmının sol alt kısmında Satınalma ilanı yapacak firmanın Ülkesinin iki harfli kısaltması bulunur. (Türkiye için TR gibi)
+					** İki harfli ülke tanımının yanında 6 Charlik ilan (sadece latin harfleri A-Z ve sayılar 0-9) oluşan ilan IDsi . (TR.A2T434 gibi)
+					*/
+					a1a- İlan başlığı - ZORUNLU (max-length: 150 utf8 char) - BOŞ - INLINE EDIT
+							/*
+							** Maksimum 150 utf8 charlik zorunlu bir alandır. Farklı dillerde başlık girişi yapılabilir.
+							** Belli bir uzunluktan sonrası "..." ile kesilip "title" özelliği ile tüm başlık gösterilebilir.
+							** Farklı dillerde başlık girişi için mutlaka bir ikon ve ya yol gösterici bir araç olmalı
+							*/
+					a1b- Ürün miktarı - ZORUNLU (float - maksimum e^10) - OTOMATİK = 1 - INLINE EDIT
+							/*
+							** Satınalınacak ürüm miktarı girişi yapılacaktır. Kesirli ve tam sayı olabilir.
+							** Adet gibi tam sayı olması beklenen birimler için uyarı mesajı gelebilir. (Opsiyonel)
+							*/
+					a1c- Ürün Birimi - ZORUNLU (listeden seçim) - OTOMATIK = adet - INLINE EDIT
+							/*
+							** Firmalar eğer favori birim listesi oluşturmuş ise selectbox'ta bu birimler üstte görünür. Uygun birim listeden seçilir.
+							** Opsiyonel olarak uygun tam ya da ondalıklı sayı girilmemiş ise uyarı gösterilebilir.
+							*/
+					a1d- Açıklama (html text) BOŞ - INLINE EDIT
+							/*
+							** Açıklama zorunlu değildir ancak tavsiye edilir.
+							** Satınalınacak ürün için farklı dillerde açıklama girişi yapılabilir.
+							*/
+					a1e- Satınalınacak Ürün Marka-Model Ekleme - BOŞ - INLINE EDIT
+							/*
+							** Marka/model özelliği bilindik ürünlerin marka model ve sipariş kodu ile alınmasını sağlamak içindir.
+							** Bazı firmalar belli marka ve modelde standart ürünler kullanırlar ve belki hiç açıklama yazmadan 
+							** bu alanı doldurarak satınalmaya çıkarlar.
+							** 3 alan vardır marka ve model alanları max-length 30 utf-8 char
+							** Sipariş kodu 50 utf8 char
+							** Maksimum 3 marka model/model sırası ekleneilir
+							*/
+					a1f- Satınalma Yapılacak Ülkeler - KUTU SEÇİMİ
+							/*
+							** Eğer firma sadece yerel ticaret yapacağını belirtmiş ise, firmanın legal bulunduğu ülke görünecek ve seçi şansı verilmeyecek
+							** Eğer uluslararası ticaret yapabiliyorsa bir switch buton ile bu ilanın yerel mi yoksa uluslararası mı olacağını seçer.
+							** Uluslararası ilan seçmiş ise kendi satınalma ülkeleri listede görünür. Yeni ülkeler ekler ya da çkarır.
+							*/
+				a2- Teslimat Tab'ı - OPSIYONEL TESLİMAT BİLGİLERİ
+						/*
+						** Satınalma yapacak firma teslimat bilgilerini hiç kullanmayabilir.
+						** Kişisel ayarından teslimat bölümünü hiç göstermemeyi seçebilir.
+						*/
+						a2a- Teslimat Bölümü Tamamen Kapatma Switch'i - KUTU SEÇİMİ
+								/*
+								** Teslimat tabında üstte bulunan switch buton ile teslimat bilgilerini komple kaldırabilir.
+								** İlan önizlemede bu durum teslimat bölümünün komple kaldırılması ile daha sade bir görünüme sahip olur
+								*/
+						a2b- Teslimat Tipi ve Termin Süresi - KUTU SEÇİMİ - [DeliveryDuration - TimeName - 
+								/*
+								** Termin: Bir isteğin (sipârişin) karşılanabileceği (teslim edileceği) süre, işin bitirilme süresi.
+								** Üretim için verdiğiniz siparişlerde ya siparişten itibaren belli bir tarihte malzemenizi teslim almak istersiniz (örn: 15/12,2017) ya da
+								** belli bir süre içerisinde siparişinizin teslim edilmesini istersiniz(örn: siparişten itibaren 6 hafta içinde)
+								** Satın alma yapacak kullanıcılar öncelikle 4 farklı seçenekten teslimat tipini seçerler.
+								** opt_1 [Belirli Tarihe kadar Teslimat Yapılmalı] - DeliveryDuration
+								** opt_2 [Belirli Tarihe kadar Kargoya Verilmeli] - DeliveryDuration
+								** opt_3 [Siparişten sonra Belirli Süre İçerisinde Teslimat Yapılmalı] - DeliveryDuration
+								** opt_4 [Siparişten sonra Belirli Süre İçerisinde Kargoya Verilmeli] - DeliveryDuration
+								** Belirli tarih seçeneklerinden biri seçilirse tarih seçme kutusu çıkar.
+								** Belirli bir süre seçeneği çıkar ise o halde bir sayı girilebilecek giriş alanı ve bir süre tipi giriş alanı çıkar.
+								** örneğin 5 gün/hafta/ay gibi
+								*/
+						a2c- Teslimat Şekli [Incoterms] - KUTU SEÇİMİ - Deliverytype
+								/*
+								** Aslında yukarıdada bahsettiğimiz adres ya da kargocuda teslimat gibi durumları çok daha detaylandırmaya imkan veren
+								** İncoterms uluslararsı ticaret şekli vardır. Pek çok kullanıcı incoterms kavramını bilmez.
+								** Sadece uluslararası ticaret yapanların görebileceği bu bölümde EXW, FOB gibi seçenekler mevcuttur.
+								** Kullanıcı birden fazla seçenek seçebilir, hatta nihai anlaşmada çok farklı bir nakliyede de anlaşılabilir.
+								** Bu bölüm satış yapmak isteyen firmaya taşıma ile ilgili ön fikir vermesi içindir.
+								** Bu terimler iyi bilinmediğinden hemen yanında bir yardım kutucuğu konulabilir.
+								*/
+						a2d- Taşımacılık Aracı - INLINE EDIT - TransportaionType
+								/*
+								** Satınalınan ürünler için tercih edilen taşımacılık araclarını belirleyebilirler. Birden fazla seçenek seçilebilir.
+								** Kara/Deniz/Hava olarak üç ana kategori seçilebilir.
+								** İkonlar renkli ya da gri (inaktif görünüm) ile seçim yapılır
+								*/
+						a2e- Sadece Benim Notum Görünsün Switch'i - KUTU SEÇİMİ
+								/*
+								** Bazı firmalar farklı teslimat prosedürleri uyguladıkları için (ara depo mal birleştirme) teslimat bölümünü bir metin olarak tutmak isterler.
+								** Bu buton ile teslimat bölümünde sadece firmanın metin açıklaması görünür.
+								*/
+						a2f- Teslimat Notu - INLINE EDIT
+								/*
+								** Firmaların teslimat ile ilgili ayrıntıları ekleyebilecekleri bölümdür. Firmalar farklı teslimat, paketleme, taşıma
+								** yöntemleri isteyebilirler bu alan firmaların, satış yapan firmaya taşıma ve nakliye sırasında dikkat etmesi ya da
+								** uygulaması gereken kuraları açıklamak içindir.
+								*/
+				a3- Ayrıntılar Tab'ı
+						/*
+						** İlanın önemli kısımlarının ve teslimat ile ilgili bölümlere de girmeyen alanlar "Ayrıntılar" Tab'ında 
+						** bulunur.
+						*/
+						a3a- İlan son Gösterim Tarihi - INLINE EDIT -
+								/*
+								** İlan için son teklif verme süresini seçebileceğiniz alandır.
+								** Son teklif süresi otomatik olarak 30gündür ve kullanıcı tarafından değiştirilebilir.
+								*/
+						a3b- Satınalma İlan Tipi - KUTU SEÇİMİ - postingtype
+								/*
+								** İlan kimlere gösterilecek ve hangi durumlarda gösterilecek gibi ilan tipi seçimi yapılır.
+								*/
+						a3c- Firma İçi Kayıt Bilgileri
+								a3c1- İlan İlgilisi - KUTU SEÇİMİ
+										/*
+										** Bu ilan için firmadan bir çalışan ilana ilgili olarak atanabilir. İlana eğer bir ilgili atanmış ise ilanı ancak o ilgili sonlandırır.
+										** İlan ilgilisi ilandaki gelişmelerden özel olarak haberdar edilir ve ilan listelerinde ilgilisi olduğu ilanlar üst kısımlarda gösteririlir.
+										** İlerde performans raporları olarak ilgiliye göre ilan durumları raporlanabilir.
+										*/
+								a3c2- Ürün Firma Kodu - KUTU SEÇİMİ
+										/*
+										** Satınalmaya çıkılan ürünün firma içerisinde takibi için bir kod tutulur.
+										** Bu kod dışarı gösterilmez sadece firmanın kendi içinde adlandırdığı ürünü, KOBIP içinde takibini kolaylaştırır.
+										** İlan filtrelerinde bu kod ile de arama yapılabilir ve ilerde raporlama yapılabilir.
+										*/
+						a3d- Görsel ve Belge Ekleme - INLINE EDIT
+								/*
+								** Firmalar satınalmaya çıkacakları ürün hakkında fotoğraf, çizim, resim ya da döküman ekleyebilirler.
+								** Eklenecek maksimum döküman sayısı ve bunların büyüklükleri sınırlıdır.
+								** Büyük boyutlu görseller HTML5 ile kullanıcının tarayıcısında küçültülür ve öyle işlemciye gönderilir.
+								*/
+								a3d1- Görsel Ekleme - INLINE EDIT
+								/*
+								** Firmalar görsel ekleme butonuna tıkladıklarında bir modal kutu açılır. Bu modal üzerinden fotoğraf seçilir, html5 işle fotoğraf istenen boyuta küçütülür.
+								** Eklenen bir fotoğraf ikon şeklinde aşağıda gösterilir ve ilan veren isterse bu fotoğrafı silebilir.
+								** Maksimum eklenecek fotoğraf adedi 5tir
+								*/
+								a3d2- Döküman Ekleme - INLINE EDIT
+								/*
+								** Kullanıcı dökümanlarını da fotoğraf eklemeye benzer bir modal ile yapar.
+								** Eklenen dosyanın uzantısı ve büyüklüğü denetlenir, kullanıcıya gerekli uyarılar gösterilir.
+								** Yüklenen dosya serverda antivirus programından geçirilebilir.
+								** Gmail gibi zip'li dosyalar hiç kabul edilmeyebilir. - KONUŞULMASI GEREKEN KONU
+								*/
+			b- Satınalma İlanı İlgilisi
+				/*
+				** Bir ilana satınalma ilgilisi atanması opsiyoneldir. Eğer bir ilgili atanmamış  olsa bile "satınalma ilan yetkisi" verilen her çalışan ilan üzerinde kontrole sahiptir.
+				** Satınalma ilan için ilgili atanmasının temel sebebi firma içinde satınalma ilanı sorumluluklarının dağıltılmasıdır.
+				** Böylelikle çalışma şekli ve performans görüntülenebilecektir.
+				** Satınalma yetkisi olan her çalışan ilan mesaşlaşması yapabilir.
+				** Satınalma yetkisi olan her çalışan ilgiliyi değiştirebilir ancak bu değişikliğin log kaydı tutulur. İlandaki info ikonu ile görüntülenebilir. 
+				** GELECEK DEĞİŞİMLER
+				** Bir ilana ilgili atanmış ise sadece ilgili kişi İlanı Silme/ Dondurma ve Editleme, Teklifi kabul etme, İlana gelen arzları silme ve susturma, İlanı tamamlama yetkisine sahiptir.
+				** Bu özellik daha profesyonel firmalar için kurumsal bir çözüm olarak düşünülmüş ancak şu an fazlaca yük olarak görüldüğü için sonraki versiyonlara eklenmesi planlanmaktadır.
+				*/
+			c- Satınalma İlanı Silme/Dondurma
+				/*
+				** Satınalma ilanına ilgili atanmamış ise, firmada satınalma ilanı veren herkes ilanı kaldırabilir.
+				** Kaldırılan ilanlar template kısmına aktarılır.
+				** Eğer ilana bir ilgili atanmış ise ilanı sadece ilan ilgilisi kaldırabilir. Bu ilanın durumunu bilmeyen bir kullanıcını tarafından kaldırılmasını engellemek içindir.
+				** ROOT'un ilan kaldırma yetkisi yoktur.
+				** İlgilisi olan ilanda ilan kadırılamıyorsa ise admin tarafından ilgili değiştirilir ve ilan bu yeni ilgili yolu ile kaldırılır.
+				** Satınalma İlanı silinirse favrilerine bu ilanı koymuş çalışanların listelerinden bu ilan silinir - OK
+				** Satınalma ilani silinirse bloklu listelerini bu ilanı koymuş çalışanların listelerinden bu ilan silinir - OK
+				*/
+			d- Satınalma İlanı Editleme
+				/*
+				** Satınalma ilanını herhangi bir satınalma ilan yetkilis verebilir, ancak editleme sadece ilgili tarafından yapılır. 
+				** Bu kısıtlamanın sebebi ilanın kimin tarafından ediltlendiğini maksimum seviyede kontrolüdür. 
+				** Satınlama ilanı ilgilisi değiştirildiğinde en azından tarih ve edit yapılıp yapılmadığı o listeden kontrol edilebilir.
+				** Diğer yetkililer ilan mesajlaşama kutusuna yazabilir. 
+				*/
+			e- Satınalma İlanı Mesajlaşma
+				/*
+				** Satınalma ilan yetkisi olan çalışanlar satınalma ilanına mesaj yazabilir.
+				** Mesaj kutusu üzerinden görsel ve döküman gönderebilirler.
+				** Kullanıcı adının baş harfi / ya da mini görseli farklı bir renk ile gösterilir.
+				** Bu kişi ikonu üzerinden gönderici hakkında daha fazla bilgi alınabilir.
+				** Belki firma içindeki çalışanların biribiri ile mesajlaşması için ayrı bir bölüm de konulabilir. - GELECEK ÖZELLİK
+				*/
+			f- Satınalma için Verilen Teklifi Kabul Etme
+				/*
+				** Satınalma için verilen teklifleri ilan ilgilisi kabul edebilir. İlgilisi teklifi kabul ettikten sonra ilanın ilgilisi değiştirilebilir.
+				** Çünkü artık olay satınalmadan çıkıp muhasebe ve lojistik olayına dönmüştür.
+				** Verilen teklifin kabul edilmesi ile diğer firmalardan gelen teklifler görünmez olur.
+				** Diğer firmalar ile yazışmalar tekrar görünecek şekilde bir biçimde gizlenir
+				** Kabul edilan teklifteki firma ile görüşmeler devam eder. 
+				** Teklif kabul edildikten sonra ilan template bölümüne kopyalanır, firma isterse bu template'i o bölümden siler.
+				*/
+			g- İlana Gelen Arzları Silme ve Susturma
+				/*
+				** İlana çok konuşan ya da alakasız tekliflerde gelebilir.
+				** Bu durumdan ilan ilgilisi bu teklifleri sessiz konumuna alabilir.
+				** Mesaj atan firmayı komple kaldırabilir.
+				** Susturulan firma mesajları sisteme girmeye devam eder, ancak uyarı mesajı gösterilmez. 
+				** Susturulan firmalar listesinin en sonunda bulunur.
+				** Silinen firmalar tekrar görüntülenebilir şekilde gizlenir. 
+				** İlgili dilerse bu mesajları da görebilir.
+				*/
+			h- Tamamlanmış İlan Yönetimi
+				/*
+				** Paralar ödenip, mallar geldiğinde iki firma arasındaki ticaret tamamen tamamlanmış olur. 
+				** Firmalar bu saatten sonra birbirleri ile ilgili yorum yapıp, puan verebilirler.
+				** Firma kapanan ilanları görebilir, aynı zamanda template bölümünden aynı ilanı verebilir.
+				*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		6- Satış ilan görüntüleme/mesajlaşma ve yönetimi
+			a- Satış İlan Listeleri
+				/*
+				** Kullanıcının kategori seçimine ve filtre ayarlarına göre Satış İlan Listesi sayfasında satınalma ilanları listelenir.
+				** Kullanıcının kendi verdiği satınalma ilanları, kendi listesinde gösterilmeyecektir.
+				** Örnek olarak; firma hem ürünü alıp aynı zamanda satıyorsa, o firmanın satış kategorisinde o ürünü kapsayan kategori bulunacak
+				** Bu nedenle o firmanın satışçısı farkında olmadan (çünkü kendi firma ismini göremiyor) kendi firmasının ilanına teklif verebilir.
+				** Satış çalışanı bu özet ilan kutucuğuna tıklayarak ilana gider ve eğer uygun satış potansiyeli görürse tokaşlaşma panelini açar.
+				** Tokalaşma panelini açtığı an ücret tahsil edilir.
+				** Partner firmalar bile isimlerini tokaşlama panelini açana kadar başlayana kadar göremez.
+				*/
+				a1- Satış İlan Liste Görünümü
+					a1a- Satış İlan Liste Görünümü Filtresi
+							/*
+							** Satış Çalışanı kendi kişisel ayarlarından belli filtreleri ön uygulamaya sokabilir. Hatta belli ilan kategorilerini ilk ekranda hiç görmez
+							** Örneğin bir bilgisayar malzemeleri satan şirkette bir satıcı sadece anakart ve cpu satışı yaparken bir diğer satış elemanın sadece depolama
+							** ünitesi sattığını varsayalım. Depolama ünitesi satan çalışan anakart ve cpu satınalma isteklerini ilk ekranda filtreleyebilir. Böylece kendi ile
+							**	doğrudan ilintili olmayan ilanları ilk aşamada görmek. Filtre ayarlarını silerek tüm ilanları görebilir.
+							** Filtreler kategori/ülke/miktar/son teklif tarihi/partner(hangi partner olduğunu bilmiyor)
+							*/
+					a1b- Satış İlan Liste Görünüm Biçimi (İçerdiği Bilgileri)
+				a2- Satış İlan Temel Görünümü
+						/*
+						** Satış ilanları 1024px genişlikte bir ekranda 3 adet görünecek şekilde Satınalma ilanlarından alınan
+						** temel bilgileri içeren satış kartlarıdır.
+						** Satınalınacak ürün başlığı, Miktar, Birim, Satınalacak Ülke, Firma puanı gibi kritik bilgileri sunar.
+						*/
+			b- Satış İlanı Mesajlaşma
+				/*
+				** Satış yapmak isteyen Firma Tokalaşma Panelini açar açmaz içerisinde mesajlaşma bölümü de olan bir kutu açılır.
+				** Kredisi yok ise yine mesaj kutusuna kredisi kalmadığı bilgisi gösterilir.
+				** Minimum ödeme tutarını yaparak satınalma yapacak firma için tokalaşma panelini açmayı tekrar dener.
+				** Mesajlaşma sırasında iki firmada birbirine resim, çizim, pdf gibi dökümanları gönderip alabilir.
+				*/
+			c- Satış İlanı Ücret Alımı
+				/*
+				** Mesajlasma sırasında teklif pazarlığından haberdar olmamız mümkün olmadığından tokalaşma paneli üzerinde ilk mesaj ya da ilk teklif sonrası KOBİP ücreti alınmaya başlar.
+				** Partner firmalar tokalaşma paneli açıldıktan sonra birbirlerinin isimlerini ve partner olduklarını görürler. (Çok önemli)
+				** Mesajlaşma sonucunda teklif boyutuna ulaşan konuşmalar firmalar arası diyalog ile sonuçlanır.
+				*/
+			d- Satış İlanı Teklif Verme
+				/*
+				** Mesajlaşma ile teklif verme aşamasına gelen konuşma sonucu iki farklı teklif verilebilir.
+				*/
+				d1- Satış İlan Basit Teklif (Sadece Toplam Tutar)
+						/*
+						** Basit bir input kutusu açılır(inline olabilir) ve satış yapmak isteyen firmanın çalışanı muhtemelen mesajlarda anlaşılan işlem için toplam tutarı girer.
+						** Bu basit teklif biçimi ile pazarlık ve ayrıntı teklif ile başlayabilir. Bu teklif kabul de görebilir.
+						*/
+				d2- Ayrıntılı (Proforma Fatura) formatında teklif verme
+						/*
+						** Ayrıntılı ve profesyonel biçimde teklif vermek isteyen firmalar ayrıntılı teklif modu ile satır satır teklif içeriğini girebilir.
+						** Firma logosu, adresi, banka bilgileri - SEÇENEK, teslimat koşulları ve en önemlisi ürün/ürünler tanımı, ayrı navlun tutarı, banka kesintileri, sigorta kesintileri, gümrük ücretleri gibi
+						** tekliflerini detaylandırabilirler.
+						** Bu ücretlerin toplam tutarı teklif tutarı olarak basit modda olduğu gibi satınalacak firmaya gösterilir.
+						** Bu tekliflerin fiyatlamasında ya da hata yapılması durumunda revizyona gidilebilir.
+						** Ancak verilen bir teklif asla silinemez ancak yeni revizyonunun olduğu belirtilebilir.
+						*/
+				d3- Ayrıntılı (Proforma Fatura) ve Revizyonların Görünümü (PDF formatında)
+						/*
+						** Satıcı firmada satış yetkisi bulunan kişiler revizyon yapabilir.
+						** Bir teklif verildikten sonra hem bilgi güncelleme, fiyat revizyonları, yeni ürün ekleme ve hataların düzeltilmesi yapılabilir.
+						** Revize teklifler mesajlaşma panelinin sağ alt kısmında listeli gösterilir.
+						** Firmalar hem en son verilen "Geçerli Teklifi" ya da hataları bulunan eski teklifleri görebilirler.
+						** Ayrıca bu düzeltme ve pazarlık sürecini "tokalaşma süreci" olarak gösterebiliriz.
+						*/
+			e- Teklif Revisyon ve Düzeltme - UpdateReason
+				/*
+				** Verilen teklifler basit modda ya da Proforma olsun kesinlikle silinemez. Bu geçmişe dönük firma ile nasıl bir pazarlık ve düzeltme olduğuna yönelik bir belge olarak durur.
+				** Revize teklifi vermeden önce revizyon nedeni seçilir. Örneğin yanlış fiyatlandırma, yanlış tanım ya da bir eksiklik sebebi ile revize edilmiş ise, "Hatalı teklif revizyonu" seçilir.
+				** Fiyat indirimi ya da harcamalarda bir değişlik olmuş ise "Fiyat revizyonu Teklifi" olarak seçilir.
+				*/
+				e1- Hatalı Teklif Revizyonu
+					/*
+					** Teklif veren firmalar şehven, ürünü yanlış anladığı için, satınalan firmanın isteği üzerine tekliflerinde değişiklik yapabilirler.
+					** Değişikliğin hangi sebepten yapıldığını drop down üzerinden seçmelilerdir. Yani şehven mi yapıldı bu hata
+					** Ürün siparşinde ekleme, nakliye eklemesi, banka masrafları gibi kalem eklemesi de yapılabilir, bu durumlar da belirtilmedir.
+					** Eski teklifler de görünmek üzere revize edilmiş teklifler de görünür.
+					** Firma isterse eski teklifleri de görebilir, belki firma yöneticisi emin olmak istiyor.
+					*/
+				e2- Teklif Fiyat Revizyonu
+					/*
+					** Fiyat indirmi ya da yükseltilmesi (belki kur farkından) durumu oluşabilir. Bu durum yukarıdaki kategori gibi belirtilerek, revize teklif oluşturulur.
+					*/
+				e3- Teklif Düzeltme Kaynağı Veritabanı - UpdateSource
+					/*
+					** Bir teklif proforma ya da inputbox üzerinden revizyon yapılabilir. Bu revizyonun kaynağı veritabanında tutulur. Firmaya teklif reviyon listesi getirilebilir.
+					** 
+					*/
+			f- Favori Satış ilanları Yönetimi
+				/*
+				** Firmanın hergün Satış İlanları listesine yeni ilanlar düşecektir (İlan sayısı çok fazla olabilir).
+				** Satış departmanı çalışanları bu ilanların bir kısmına hemen cevap verecekler, ancak bir kısmını belki kolayca bulabilecekleri favori ilanlar listesine atacaklardır.
+				** Böylece teklif vermeye değer bulup sonra iletişime geçecekleri ilanları kolayca bulabilecekleri yer favori ilanlar bölümü olacaktır.
+				** Favori ilanlar bölümünde de yine temel ilan filtreleme bölümleri çalışacaktır.
+				*/
+				f1- Favori İlanlar Listesine Ekleme
+					/*
+					** Bir İlanı favori ilanlara eklemek için ilanın sağ üst kısmında bulunan yıldıza tıklamak yeterlidir.
+					** Tüm firma çalışanlarının farklı favori ilan listeleri olabilir.
+					** Bir ilanın aynı firmada herhangi bir çalışan tarafından "Tokalaşma moduna geçirilmesi" ile ilan favorilerden kaldırılmaz, zira ilana diğer çalışanlar girerse tokalaşma ekranını görecekler.
+					*/
+				f2- Favori İlanlar Listesinden Çıkarma
+					/*
+					** Satınalan firma herhangi bir sebeple diğer firma tarafından bloklanırsa
+					** KOBİP firma ya da ilan kaldırılırsa ve ya sınırlanırsa
+					** İlan veren firma herhangi bir teklifi kabul ederse
+					** İlan veren firma ilanı iptal ederse
+					** İlan silinirse
+					** Bir ilan bir çalışan tarafından bloklanır ancak bir başka kullanıcı tarafından silinir ya da görünmez yapılırsa, bir işaret ile bu diğer kullanıcıya gösterilir. - SEÇENEK
+					*/
+			g- Teklif Kabul Edilmiş Satış Yönetimi
+				/*
+				** Teklif Kabul edildikten sonra üzerine düzeltme yapılamaz. Sadece iki şirket birbirleri ile masajlaşabilir. 
+				** Alışveriş işlemi tamamen tamamlanana kadar bu mesajlaşma devam eder. 
+				** Alışveriş tamamlandığında Satınalan ya da Satış yapan firma İşlemi tamamlama butonlarına basar. İki tarafta bu durumu bilir.
+				*/
+			h- Satınalma İlan Şablonları
+				/*
+				** Teklifi kabul edilmiş işlemlerin temel bilgileri alınarak ilan şablonları oluşturulabilir.
+				**	Böylelikle Aynı ürün her seferinde bütün detaylar tekrar yazılmak zorunda kalınmaz.
+				** Şablonlarda bulunacaklar: 
+				**											İlan başlığı
+				**											Ürün Birimi
+				**											Miktar:1 olarak değişecek
+				**											Ürün Açıklaması ve Çevirileri
+				**											Marka ve Moddeller
+				**											Ürün Görsel ve Dökümanları
+				**											Teslimat Detaylarının Tamamı
+				**											Ürün İlgilisi
+				**											Firma İçinde Kullanılan Ürün Kodu
+				**											Satış Yapılacak Ülkelerin Tamamı
+				**
+				** İlan veren çalışan bu ayarları istediği gibi değiştirir ve ilanı yayınlar.
+				*/
+			i- Firmaların birbirini partner olarak eklemesi
+				/*
+				** Firmalar daha önce partner değillerse ilk mesajın ardından birbirlerini partner olarak ekleyebileceklerdir.
+				** Sonuçta ilk mesaj ile KOBIP ücretini almış olacak ve firmaların birbirini eklemesine olanak sağlamış olacak.
+				** Partner olan firmalar bile ilk mesajı atana kadar partner olup olmadıklarını bilemeyecekler.
+				*/
+			j- Tamamlanmış Satış işlemleri
+				/*
+				** Alışverişin tamamen bittiğini düşündüğünüz işlemlerde firmanız adına eğer varsa ilan ilgilisi ya da 
+				** ilgili yoksa herhangi bir satınalma ilgilisi İşlemi tamamlar. Diğer firma da bundan haberdar olur.
+				** İşlemi tamamlayan firmalar alıveriş yaptığı firmaya not verebilir. Değerlendirme yazabilir.
+				*/
+				ÖNERİLER
+				/*
+				** Alıcı firma teklifi hakkında belirsizlikler olabilir. Satıcı firma bir buton vasıtası ile ilanı ayrıntılandırmak isteyebilir.
+				*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		7- Harcama yönetimi
+			a- Harcama Yönetimi
+				/*
+				** Firma harcamalarını "Harcamalar" sekmesi tıklanarak görülebilir.
+				** Bir firmanın hem kredi hem de krediye çevrilmemiş bakiyesi olabilir. 
+				** Kredisi kalmamış ancak bakiyesi varsa teklif esnasında otomatik olarak krediye çevrilir.
+				** Hem kredi hem de bakiye olarak bir rezerv tutulmasının sebebi para iadesini yapabilmek,
+				** belli zamanlarda kampanyalar düzenlemek ve bonus krediler dağıtmak.
+				** Bunun yanında bu sistem ülkelere göre değşik kurlarda kredi dönüşümü sağlamaya imkan verir.
+				** Örneği amerikada 1 usd 1 kredi iken hindistanda 1 kredi 0.5usd olabilir.
+				** Krediye çevrilmiş bakiyeler kesinlikle geri ödenmez.
+				** Krediye çevrilmemiş bakiyeler talep halinde 180 gün içerisinde geri ödenir.
+				*/
+			b- Ödeme Sistemi
+				/*
+				** Ödemeler 3D secure kullanılarak kredi kartı ile alınacaktır.
+				** Ödeme tarihi, ödeme tutarı ve kartın son 4 hanesi firmanın ödeme cetvelinde görünecektir.
+				** Kredi kart bilgileri KOBIP serverlarında tutulmayacaktır. 
+				** Banka sistemi le anlaşılır ise visa/ master card gibi finansal kuruluşlarda saklanabilir.
+				** İlerde kayıtlı kredi kartı gibi bir opsiyon sunmak faydalı olabilir.
+				** Kayıtlı bir kredi kartı ile hem bakiye hem kredi bitiğinde bakiye kısmına otomatik ödeme yapılabilir.
+				*/
+			c- Kredi Sistemi ve Bakiye
+				/*
+				** Her ilan mesajlaşması 1 kredi olarak düşünülmüştür. Bu kredi fiyatı değiştirilmeyecektir.
+				** Ancak 1 kredinin kuru değiştirilebilir. Örneğin bugün Türkiye için 1USD olan 1 kredi sonradan 0.8 USD yapılabilir.
+				** Kredi sistemi KOBIP'in para birimi gibidir. İçeride yapılan alışverişler bu para birimi üzerinden olur.
+				** Çeviri işlemleri de bu krediler ile yapılır. Çevrilecek kelime sayısı belli bir tam sayı kredi tutarına denk gelir.
+				** Bakiye firmaların KOBIP hesabına gönderdikleri gerçek paraların krediye çevrilmemiş kısmıdır.
+				*/
+			d- Bonuslar, Destekler ve Kuponlar
+				/*
+				** Bütün dünyada firmalara ticareti geliştirme amaçlı destekler verilir.
+				** Örneğin Türkiye alibaba gibi B2B sitelerine %80e yakın (~4000TL) destek vermektedir.
+				** Bunun dışında acentalar üzerinden üyeliği teşvik edici Bonuslar verilebilir.
+				** Belli kategorilerde üreticileri artırmak için o kategorilere özel bonuslar verilebilir.
+				** İnternette ya da örneğin fuar gibi aktivitelerde firmaların kayıt işlemlerini cazip hale getirmek için kuponlar dağıtılabilir.
+				** Bütün bu "kodlar" email üzerinden link tıklanması ya da harcamalar bölümündeki tek bir girdi alanı üzerinden yapılır.
+				*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		8- Kategori Yönetimi
+			/*
+			** Kategori seçimi çok önemlidir; mümkün olabilecek en yüksek otomasyonu sağlamalıdır.
+			** Deyim yerindeyse leb demeden leblebiyi anlamalı, leblebinin kuruyemiş kategorisinde olduğunu bilmelidir.
+			** KOBIP'in diğer sitelerden en önemli farkı kullanıcıyı kategori seçimleri içinde boğmamalıdır.
+			** Diğer B2B sitelerinde kullanıcılar kategori seçmekten yorulmakta yarım bırakmakta ya da yanlış veya eksik seçimlere yönelmektedir.
+			** Alt kategoriler 8-9 derine indiği görülebilir (Özellikle otomotiv sektöründe)
+			** En dip kategorinin içerdiği ürünlerin benzer isimleri, ürün kodları, marka ve modelleri, satış kodları, GTIP noları ve hatta barkodları bile bu son kategoriye ulaşmakta kullanılabilir.
+			** Kategori seçiminin giriş alanı bir command line gibi düşünülen bilir, ozel komutlarla belli farklı aramalar yapabilir. (Google type:pdf gibi)
+			** Farklı kollardan girip aynı ürüne ulaşma olabilir. 
+			** Örneğin Sıvılar ve İçecekler olarak iki grup düşünelim. Sıvılar > Doğada Bulunan Sıvılar > İçilebilir Sıvılar > Su  = İçecekler > Doğadan Bulunan İçecekler > Su gibi
+			** Bu tür bir iki farklı alanda kullanılan ürünler için tek bir ID olmalı ve kişi diğer yoldan gitse bile o temel En dip kategoriye ulaşmalı.
+			** Kişi en dip değil ama ortadan bir kategori seçmiş ise bu ortadaki kategorinin alt sekmeleri kişiye gösterilmeli ve seçim yapması istenmelidir.
+			** Eğer çok fazla sayıda alt kategori bulunuyor ise arama metnini daha spesifik yapması istenmelidir.
+			** Kişi hiçbir sekilde aradığı kategori bulamıyorsa bize bu durumu aktarmalı ve biz bu alt kategorileri eklemeliyiz.
+			*/
+			a- Kategorileme Kriterleri
+				/*
+				** En dip ya da yakın kategori ismi, ürün ismi, ürünün benzer isimleri, ürün kodları, marka ve modelleri, satış kodları, GTIP noları ve hatta barkodları bile bu son kategoriye ulaşmakta kullanılabilir.
+				*/
+			b- Kategori Girişi
+				/*
+				** Özellikle ilk zamanlarda çokça karşılaşacağımız durumdur. Ürün satışı yapan firmalar kategorilerini eklerken muhtemelen bazı kategorileri bulamayacaklar.
+				** Bu tür sorun yaşayan kişiler bize ürünün ismini ya da kategoriyi ve hatta ürünle ilgili belli tanımları verirlerse, 24 saat içinde o kategoriyi ekleyeceğimiz taahüdünü vereceğiz
+				*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		9- Hesap Yönetimi, Kurtarılması ve Şifre yenileme
+			a- Unutulan Şifre Yenileme
+				a1- ROOT (Firma) Şifre Yenileme
+					/*
+					** ROOT hesabı çok kullanılmadığı için şifresinin unutulması mümkündür. Ya da firmada o şifreyi bilen kişiler bir sebepten bu şifreyi veremiyordur.
+					** Firma ROOT hesabı E-posta adresi firma bilgileri sayfasında sol kısımda logo altında yazmaktadır. Aynı zamanda firmanın bu adresi bir yere not etmesi beklenmektedir.
+					** Bu E-posta adresi verilerek şifre yenileme isteği yapılır. 
+					** Şifre yenileme isteği akabinde E-posta adresinde gönderilen link tıklanarak yeni şifre belirlenir.
+					** Firma bu E-posta adresini bilmiyorsa gerekli belgeleri KOBIP'e ulaştırarak kullanıcı giriş E-posta adresini alabilir ya da yeni bir E-posta belirleyebilir.
+					** Gerekli Belgeler Ülkenin yasal mercilerinden Faaliyet Yazısı, İmza Sirküleri ,Firmanın Yetkili Müdüründen İmzalı Talep Dilekçesi firmanın bize belirmiş olduğu domain ile sonlanan bir E-posta adresinden istenir.
+					** Yukarıda sayılan belgeler herhangi bir yardım menüsünde yazmaz, firmanın bir şekilde bize ulaşması akabinde kendilerine bildirilir.
+					*/
+				a2- Çalışan Şifre Yenileme
+					/*
+					** Çalışanın davet ve kayıt sırasında kullandığı E-posta adresi verilerek şifre yenileme isteği yapılır.
+					** Şifre yenileme isteği akabinde E-posta adresinde gönderilen link tıklanarak yeni şifre belirlenir.
+					** Çalışan kullanıcı ismini unutmuş ise ROOT hesabından yetkili giriş yaparak çalışanın E-posta kullanıcı adını görebilir.
+					*/
+			b- Kullanıcı Girişi E-posta Adresinin Değiştirilmesi
+				/*
+				** Hem ROOT hem de Çalışanlar için aynıdır ve tekrar E-posta doğrulaması gerekecektir.
+				** Öncesinde kullanıcı girişi yapmaları gerekir.
+				** ROOT için;
+				** Firma Bilgileri Düzenle Bölümünde saolda bulunan kullanıcı E-posta adresini değiştirir.
+				** Çalışan İçin;
+				** Kişisel Bilgiler Düzeleme Bölümünden sol bölümde bulunan kullanıcı E-posta adresini değiştirir.
+				** ROOT ve Çalışan için;
+				** Aktivasyon E-postası gönderilir. Aktive edilene kadar eski kullanıcı adı kullanılmaya devam eder. 
+				** 10 gün içersidinde aktive edilmezse talep silinir.
+				*/				
+			c- Çalışan Hesaplarının Transferi (Gelecek Özellik)
+				/*
+				** Firmadan bir çalışan ayrılıp yerine yenisi geldiğinde üzerinde bulanan işlerin yeni çalışana aktarılması planlanmaktadır.
+				** Eski çalışanın ilgili olduğu satınalma ve satış ilanları
+				** Eski çalışanın iletişim yetkilisi olduğu partnerleri
+				** Eski çalışanın yetkileri
+				*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		10- Acentlar, Yardımcılar ve Yetkileri
+			/*
+			** KOBIP bütün pazarlama ve müşteri ilişkilerini en azından ilk 2 yılında üzerine almak istememektedir.
+			** Özellike ilk yıllarda tüm olası müşterilere ulaşmak için yardımcı olabilecek bütün kişi ve kurumlarla iletşim halinde olmak mantıklıdır.
+			** Bunun için şirketler ile ilişkileri yoğun olan kullanılabilir 4 grup vardır.
+			** 
+			** Muhasebeciler
+			** Danışmanlık Şirketleri
+			** Dernek, Oda ve Gruplar
+			** Devlet Kurumları
+			**
+			** Bu gruplar şirketlerin güvenini kazanmış yapılardır, üye kazanımında ortak çalışmaya uygundurlar.
+			** İlk 3 grup kardan belli bir pay verilerek kazanılabilir. 
+			** Devlet kurumları ticareti desteklemek için destek verebilir.
+			*/
+			a- Acenta Sorumlulukları
+				/* 
+				** Acentalar Danışmanlık Şirketleri ve Dernek, Odalar tarafından kullanılabilir bir opsiyondur. 
+				** Acentalar üye kazanımında çalıştıkları gibi üyelerin bazı sorunlarını çözemede de KOBIP ile beraber çalışacaklardır. 
+				** Acentalar şirketlere KOBIP puanlarını artıracak tüyolar sağlamaya, temel işleyişi anlatmakla yükümlüdürler.
+				** Hem E-posta hem de telefon ile yardım sağlamak zorundadırlar.
+				** Bu sorumluluklar bir sözleşme ile teminat altına alınır.
+				*/
+			b- Acenta Yetkileri
+				/*
+				** Acentalar firmaların eksik bilgilerini, çalışan sayılarını, aylık harcamalarını, KOBIP puanlarını ve müşteri Puanlarını görürler.
+				** Onlara öneride bulunma hakkında bir pencere sağlanabilir.
+				** Firmalar istedikleri takdirde acentadan ayrılabilir.
+				** Bonus olarak verilen krediler mazeretsiz ayrılık ise ve 2 yıldan önce yapılmış ise geri alınır.
+				*/
+			c- Acenta Sorgu Ekranları
+				/*
+				** Acenta hangi firmaların olduğunu ve kazancını görebilir.
+				** Firma davet için sorgu yapabilir.
+				*/
+			d- Firmaların Acenta ile Kaydı
+				/*
+				** Firmalar kayıttan bir ay sonrasına kadar acenta kodu ile bir acentaya bağlanabilirler.
+				** Acentaya kaydolan firmaya bonus kredi (10 kredi) verilir.
+				** Kayıttan itibaren 2 yıl boyunca KOBIP'te teklif için kullanılan kredi tutarının %15si dolar karşılığı acentaya ödenir.
+				** Firma eğer bir yardımcı ya da diğer kanallardan üye yapılmış ise KOBIP'te teklif için kullanılan kredi tutarının %20si dolar karşılığı acentaya ödenir.
+				** Ödeme almak için minimum 100 USD birikmesi gerekir. 
+				** Acentanın Kredi kartı hesabına gönderilir.
+				** Yardımcı ile kaydolan firmalar Acentaya kayıt yaptıramazlar.
+				*/
+			e- Yardımcı Tanımı ve Yetkileri
+				/*
+				** Yardımcılar kayıt yaptırdıkları frm başına belli bir ücret alırlar.
+				** Sahte hesapları önelmek adına para ödenebilmesi için 6 ay içerisinde kayıt yaptıran firmanın  bir teklif vermesi beklenmektedir.
+				** Muhasebeci  ya firma grupları temsilcileri kendileri ile çalışan firmaları KOBIP'e kayda ikna edebilir.
+				** Yardımcıların kayıttan sonra sorumluluğu yoktur.
+				** Kayıt yaptırdığı firmaları görür, haftalık olarak toplanan bakiyeyi görür.
+				** 
+				*/
+			f- Firmaların Yardımcı ile Kaydı
+				/*
+				** Yardımcılara kayıttan itibaren 2 yıl boyunca o firmanın yaptığı teklifler için kredi harcamasının %10u ödenir
+				** Yardımcı kodu ile kaydolan firmaya bonus kredi (10 kredi) verilir.
+				** Ödeme almak için minimum 100 USD birikmesi gerekir. 
+				*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		98- İşleyişler
+			1- Satınalma İlanı ve Satış
+				/*
+				** Satınalma ilanı firmanın "ilan verme yetkisi" verilen çalışan tarafından iki biçimde verilir;
+				** 	İlan Şablonları
+				** 	Yeni İlan Oluşturma
+				**
+				** İlan KOBIP tarafından yayınlanmadan önce ya da sonra değerlendirilir - SEÇENEK
+				** Satış ilanı görüntüleme yetkisi olan kişiler tarafından görüntülenir. (Firma satış elemanları)
+				**
+				** Yayınlanan ilanı görmek için firma şartları;
+				** 	İlan veren firmaların belirlediği ülke listesinde olmak
+				** 	İlan veren firmanın belirlediği ürün kategorisinde satış yapıyor olmak (kategori listesinde eklemek)
+				** 	İlan veren firma tarafından bloklanmamış olmak
+				** 	İlan veren firmanın satıcı firma tarafından bloklanmamış olması
+				**
+				** Satış İlanlarından ilanı gören satış çalışanı;
+				** 	hemen ilana yanıt verebilir.
+				**		ilanı sonra değerlendirmek üzere favori ilanlarına ekleyebilir
+				** 	ilanı kıymetsiz görüp ilan listesinden kaldırabilir (aşırı sayıda ilan gelen bir firmada gereksiz ilanı görünmez yapma özelliğini sık kullanacaktır)
+				** 	
+				** Satış Çalışanı ilan filtreleri;
+				** 	Kategori
+				** 	Ülke
+				** 	Ürün miktarı
+				** 	Son teklif tarihi
+				**
+				** Satış Personeli İlan için tokalaşma açana kadar satınalma yapacak firmanın ismini göremez.
+				** Partner olup olmadığını, hangi ülkeden olduğunu bilir ancak hangi firma olduğunu bilemez.
+				** Satış Çalışanı İlan için tokalaşma kutusu açtıktan sonra şirketin partner olup olmadığı ve firma ismi iki firma için de görünür hale gelir.
+				** Satış Çalışanı ilana tokalaşma açtıktan sonra sadece mesaj yazıp ayrıtıntılar sorabilir (teklif zorunlu değilse) ya da basit/proforma teklif verir.
+				** Mesaj atamadan önce teklif vermeyi zorunlu kılan bir seçenek te ayrıca bulunacaktır.
+				** Bu teklifi zorunlu kılan seçenegin sebebi; yüksek ya da alakasız teklif veren satıcılar ile vakit kaybedilmez.
+				** Satıcı ve Alıcı arasındaki bütün iletişim "Tokalaşma" kutusunda gelişir.
+				** Satınalma ilanı veren firmanın ilan sayfasında her bir Satıcı için alt alta Tokalaşma kutuları açılır. 
+				**
+				** Alıcı bu Tokalaşma kutularını filtreleyebilir. Satınalan firma Filtreleri;
+				** 	En düşük teklif
+				** 	Partnerlerim
+				** 	Ülkeler
+				** 	Favori Tokalaşmalar - SEÇENEK
+				**
+				** İlk tokalaşma kutusu açıldıktan sonra satıcı ve alıcı biribirlerini partner değillerse ekleyebilirler.
+				** Teklif verme iki şekilde olabilir;
+				** 	Basit Teklif
+				** 	Ayrıntılı Teklif
+				**
+				** Basit Teklif: alıcının belirlediği tüm kriterleri sağlayan toplam tutarın tek sefer yazılması kur seçimi (USD/TL) ile yapılır. 
+				** Ayrıntılı Teklif: verilmek istendiğinde bir modal açılır ve satır satır hangi harcamalar var bunlar belirtilir.
+				** Proforma faturanın hazırlandığı bölümdür. 
+				** Şu anki sistemde genelde bir excel şablonu üzerine bunlar belirtiliyor.
+				**
+				** Satıcı Ayrıntılı Tekliflerini revize edebilir. Revize Sebepleri;
+				** 	Bilgi Güncelleme
+				** 	Ürün Fiyat Revizesi
+				** 	Yeni Ürün Ekleme
+				** 	Şehven Hatalı Teklif
+				** 	
+				** Eski ve revize teklifler ulaşılabilir durumdadır.
+				** Bir teklif kabul edildiğinde diğer tokalaşma kutuları sayfada görünmeyecek şekilde bir link altına atılırlar. 
+				** Teklif kabulünden sonra sadece alıcı ve satıcı arasındaki tokalaşma kutusu aktifdir.
+				** Ödemeler ve teslimatlar yapıldıktan sonra iki taraftan da onay alınarak ilan kapatılır.
+				** Bu onaylama sırasında alıcı ve satıcı birbirlerine puan verebilir.
+				** Hedef Teklif kabulu sonrası ödeme, üretim, nakliye gibi süreçler de izlenebilir duruma getirilebilir -SEÇENEK
+				**
+				** TOKALAŞMA BUTONU OLURSA ÇIKABİLECEK SORUNLAR
+				** Tokalaşma başlatılırken buton kullanılması düşünülmüştü ancak buton ile ücret tahsilatı yapılırsa,
+				** henüz iletişime geçilmediği için ücret aşağıdaki durumlarda şahibeli kalıyor.
+				** 
+				** İlana mesaj yazılırken ya da teklif verilirken ilanın firma tarafından kapatılması (Kullanıcıya ne mesaj ya da tepki verilecek ? )
+				** İlana mesaj yazılırken ya da teklif verilirken firmanın diğer firma tarafından bloklanması (Kullanıcıya ne mesaj ya da tepki verilecek ? )
+				** İlana tokalaşma açıp hiç mesaj yazmadan ya da teklif vermeden 1 gün içerisinde kapatılması, (ilan son tarihi öncesi)
+				** İlana tokalaşma açıp hiç mesaj vermeden ya da teklif vermeden 1 gün içerisinde başka teklifin kabul edilmesi
+				** İlana tokalaşma açıp hiç mesaj vermeden ya da teklif vermeden firmanın diğer firma tarafından bloklanması (tokalaşma açanların ücretleri iade edilecek mi ?)
+				** İlanın KOBİP tarafından kapatılması (tokalaşma açanların ücretleri iade edilecek mi ?)
+				** 
+				** 
+				*/
+			2- Partner Davet
+				/*
+				** Firma davetleri iki şekilde yapılır;
+				** Tokalaşma kutusu açıldıktan sonra firmayı davet etme (Firma IDsi biliniyor, standart davettir)
+				** Daha önceden KOBIP dışı ticaret ilişkisinden tanışıklık olan firmalar.
+				** Bu firmalar KOBIP'te kayıtlı olabilir ya da bu e-posta adresleri yeni firmaları davet etme amaçlı kullanılabilir.
+				** Aşağıdaki bölümlerde bu davetlerin nasıl yapılacağı ayrıntılı şekilde anlatılacaktır.
+				*/
+				a- Firma Id ile Davet
+				b- E-posta ile Davet
+					/*
+					** Partner davet blümünden firma "e-posta girişi ile davet" gönderdiğinde serverdan kayıtlı çalışan ve firma e-postaları kontrol edilir.
+					** Sistemde her çalışan için 1 kişisel ve 4 müşteriye gösterilmek üzere e-posta olabilir ve yine firma için 1 root ve 2 müşteriye gösterilmek üzere e-posta 
+					** Bir firma için kontrol edilecek maksimum e-posta sayısı toplam = çalışan sayısı x 5 + 3 tür.
+					** Contact list (GOOGLE ya da başka email) ya da excel olarak partner davet yönetmi açılabilir -SEÇENEK
+					*/
+					b1- Kayıtlı E-posta ile Davet
+						/*
+						** Eğer davet edilmek istenen firmanın herhangi bir epostası tespit edilirse;
+						** davet edilen firmanın firma IDsi bulunur ve bu ID ile davet gönderilir. (Companypartner tablosundaki invitedcompnayid set edilir)
+						*/
+					b2- Kayıtlı olmayan E-posta
+						/*
+						** Eğer firma e-postası kayıtlı değilse, Companypartner tablosundaki invitedcompanymail set edilir.
+						** Eğer daha önce davet gittiyse createdate verisi güncellenir (Mükkerrer kayıt engellenmesi)
+						** Firma aynı firmayı çok kez davet edebilir sadece güncel davet tarihi değişir. (Aşırı fazla davet için ilerde önlem alınabilir.)
+						** Kayıtlı olmayan firma eğer kayıt yaparsa ve bizim veri tabanımızda daha önce davet kaydı olduğu tespit edilirse, yeni kayıt yapan firmaya onu davet eden firmanın daveti gösterilir.
+						** Companypartner tablosunda email daveti artık firma id olarak güncellenir. (standart kayıtlı iki firma daveti moduna geçer)
+						** Eğer yeni kaydolan firma da bu daveti kabul ederse, iki firma partner olur. (yeni firma mahremiyet ayarlarını bu kabul sırasında yapar)
+						** İlk firmanın mahremiyet ayarları zaten ilk davette kaydedilmişti.
+						*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+		98- KOBIP Dökümantasyon
+			/*
+			** KOBIP işleyiş, rutinler, kullanıcı ekranı, veritabanları ve kullanılan ve faydanılan tüm program ve yardımcı scriptler ayrıntılı anlatılır.
+			** KOBIP dökümanı güncel ve işlevsel olmalıdır
+			*/
+			a- Kullanılacak Yazılımlar
+				/*
+				** Dökümantasyon için Sphinx programı kullanılır. http://www.sphinx-doc.org/en/stable/install.html
+				** Shpinx hrm html hem de pdf yapımında kolaylık sağlayan bir freewaredir
+				** Kurulumu öncesi bilgisayarınızda Phyton yüklü olduğundan emin olun.
+				** Kurulumu öncesinde pip-get.py dosyasını kaydedin ve Phyton yardımı ile çalıştırın
+				** Pip yardımı ile Shpinx programını indirin.
+				*/
+			b- Dökümantasyon Kuralları
+				/*
+				** Döküman tamamen Shpinx'e uygun rst formatından yazılacaktır. RST formatı text içerir. 
+				** Her bölüm kendi içinde alt dallara ayrılacak ve alt başlıklar ile gösterilecektir.
+				*/
+			c- Çıktı Formatları
+				/*
+				** Çıktılar html ve pdf formatında olacak. PDF formatı A4 kağıda çıktı alacak şekilde bir kitap kadar düzgün ayarlanmış olacaktır.
+				*/
+-----------------------------------------------------------------------------------------------------------------------------------------
+			99-Sözlük
+				/*
+				** Amacı KOBIP İÇİNDE kullanılan bazı terimlerin içeriklerini ve kapsamların tam olarak kullanan ve anlamaya çalışan kişiye açıklamaktır.
+				*/
+				ROOT kullanıcı
+				/* Firmanın tüzel yapısıdır. Çalışanlardan farklı olarak hesabın bir ya da birkaç müdür tarafından kullanımı mümkündür. */
+				ROOT kullanıcı adı
+				/* Firmanın birincil E-posta adresidir. Bu adres istenirse diğer firmalara gösterilmez. Sadece ROOT Değiştirebilir.*/
+				Templateler
+				/* Türkçesi olarak şablon ya da mastar kullanılabilir. Tureng'e göre şablon yaygın kullanımmış. Ancak mastar da olabilir. Şablon ilanlar grubuna Şablonlar sekmesi altından ulaşılır*/
+				Tokalaşma Kutusu
+				/* Alıcı ve satıcı arasında mesajlaşma, teklif verme, görsel, belge ve fiyat pazarlığı yapılan bölümdür. */
+				İlan - Posting
+				/* Yazılımda ilan posting olarak ingilizcesi kullanılıyor. İlan her bir satınalma talebidir. */
+				Tokalaşma - Handshake Paneli
+				/* Satıcı bir ilanı beğendi ve üzerinde konuşmak ve teklif vermek isterse Tokaşlma Panelini Açar. Bu panel üzerinden mesajlaşır, teklif verir, proforma yapar, görsel ve döküman gönderir.*/
+				ROOT kullanıcı tekil yetkileri
+				/* bir firma için yönetici yetkileri olanlarında değiştiremeyeceği ROOT kullanıcı adı (e-posta), vergi numarası ve firma dondurma ve silme yetkileridir.

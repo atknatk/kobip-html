@@ -1,0 +1,37 @@
+.msj-firma {
+	display:flex;
+	padding: 8px 10px;
+	border-bottom: 1px solid #e7eaec;
+}
+.msj-firma-logo>div:first-child>img { 
+	width: 46px;
+	height: 46px;
+}
+.msj-firma-logo>div:nth-child(2) {line-height:20px; font-size:14px;}
+.msj-firma-logo>div:nth-child(2)>i {color: #ffd627; font-size: 16px; margin-top:4px;}
+.msj-firma-logo>div:nth-child(3) {text-align:center; font-size: 18px;}
+
+.msj-firma-kimlik { padding: 0 10px;}
+.msj-firma-kimlik >div:first-child {font-weight:bold; font-size:14px;}
+.msj-firma-kimlik>div:nth-child(3)  { padding: 5px 0; font-size: 14px;}
+.msj-firma-kimlik>div:nth-child(3)>label {font-weight:normal; font-size: 12px;}
+.msj-firma-kimlik>div:nth-child(3)>span {font-weight:bold; padding:0 5px;}
+
+.msj-firma-girdi {display:flex;}
+.msj-firma-girdi>div {position:relative; padding:0 5px;  margin:0 5px;}
+.msj-firma-girdi>div>i {font-size: 18px;}
+.msj-firma-girdi>div>span {
+	position:absolute;
+	font-size:9px;
+	top:-2px;
+	right:2px;
+	color:white;
+	font-weight:bold;
+	border-radius:50%;
+	background-color:red;
+	display:block;
+	width:12px;
+	height:12px;
+	text-align:center;
+	vertical-align:top;
+}

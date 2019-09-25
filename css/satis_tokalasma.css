@@ -1,0 +1,109 @@
+/*Satış mesaj kutusu özellikleri BAŞLANGIÇ*/
+.mesaj_kapsayici {
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, .1);
+    width: 100%;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+.m61a {
+
+    height: 250px;
+    background-color: #fff;
+    overflow-y: scroll;
+	overflow-x: hidden;
+    padding: 5px 5px 0 0;
+    border-radius: 2px 2px 0 0;
+}
+
+
+
+.m61a::-webkit-scrollbar-thumb {
+    background-color: #dbdbdb;
+}
+
+.m17a {
+	padding:5px;
+}
+
+.m17b {
+	display:inline-block;
+	text-align:center;
+	line-height:27px;
+	font-size:24px;
+	font-weight:bold;
+	vertical-align:top;
+}
+.m17b_1 {
+	border-radius: 50%;
+	border:1px solid #f1f1f1;
+	}
+.m17b_2 {border:1px solid #fff;}
+
+.m65b{text-align:right; 	float:right;}
+.m62b{text-align:left; 	float:left;}
+
+
+.m63b {
+	padding: 5px 10px 5px 10px;
+    border-radius: 10px;
+    width: calc(100% - 75px);
+    color: white;
+    font-size: small;
+	display:inline-block;
+	text-align:left;
+}
+.m18a {
+	
+    background: #4384c1;
+
+
+}
+
+.m18b {
+
+    background: coral;
+
+
+}
+
+.m16b {
+	
+    background-color: #f8f8f8;
+    border-top: 1px solid #f0f0f0;
+    border-radius: 0 0 2px 2px;
+    height: 40px;
+    display: block;
+    line-height: 36px;
+    padding: 0 5px 0 5px;
+}
+
+.m16b i {
+    vertical-align: middle;
+    margin: 0 5px 0 0;
+}
+
+.m16b input {
+    width: calc(100% - 120px);
+    height: 32px;
+    border: 1px solid #f0f0f0;
+    outline: none;
+    text-indent: 5px;
+    color: #525252;
+    margin: 0 20px 0 0;
+	background-color: #fff; 
+}
+
+/* mesajlaşma renkeler baslangıc */
+.mc1{color:#4286f4; margin:0 3px 0 0 ; width:28px; height:28px;}
+.mc16{color:#f2a430; margin:0 0 0 3px; width:28px; height:28px;}
+/* mesajlaşma renkeler son*/
+
+.m16b>i {font-size:1.2em; padding:0 5px; margin:0 3px;}
+
+.m16b>i.fa-send {font-size:1.5em; }
+.m16b>i.fa-send:hover{color:blue;} 
+
+
+.kb-partner-ayar>i.fa-times:hover {color:red;}
+/*Satış mesaj kutusu özellikleri SON*/

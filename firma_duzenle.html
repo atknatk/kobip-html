@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Firma Bilgileri Düzenleme</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<link href="css/kb.css" rel="stylesheet"> <!-- kb eklendi -->
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">  <!-- nav header kurali css'ten değistirildi -->
+                    <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear">
+							<span class="block"> <!-- bu bölümede orjinali  class="block m-t-xs" -->
+							<img class="kb uye_mini_logo1" src="kb_img/kb_ikon/logo.svg"> <!--  yeni stil yazıldı --> 
+							<strong class="kb nav_logo_kb_metin1 font-bold">KOBIP</strong>
+							</span>
+							<span class="text-muted text-xs block">Purchasing Network</b></span> <!-- karakter fazlası alt satıra geçiyor alt satıra geçmeyen kelimeler seçilmeli -->
+							</span>
+							</a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="#">Ayarlar</a></li>
+                            </ul>
+                    </div>
+                    <div class="logo-element">
+                        <img class="kb uye_mini_logo1" src="kb_img/kb_ikon/logo.svg"> <!--  yeni stil yazıldı --> 
+                    </div>
+                </li>
+				
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Firma Bilgileri</span></li>
+				
+                <li><a href="index.html"><i class="fa fa-building"></i> <span class="nav-label">Genel Bilgiler</span></a></li>
+                <li><a href="partner.html"><i class="fa fa-suitcase"></i> <span class="nav-label">Partnerler</span> </a></li>
+				<li><a href="calisan.html"><i class="fa fa-group"></i> <span class="nav-label">Çalışanlar</span> </a></li>
+				<li><a href="kategori.html"><i class="fa fa-tags"></i> <span class="nav-label">Kategoriler</span> </a></li>
+				<li><a href="harcama.html"><i class="fa fa-bank"></i> <span class="nav-label">Harcamalar</span> </a></li>
+				
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Satınalma</span></li>
+				
+				 <li><a href="minor.html"><i class="fa fa-plus-square"></i> <span class="nav-label">Yeni Oluştur</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Taslak İlanlar</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th"></i> <span class="nav-label">İlan Listesi</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-check-square"></i> <span class="nav-label">Tamamlanmış İşlemler</span> </a></li>
+				  
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Satış</span></li>
+				
+				 <li><a href="minor.html"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Güncel İlanlar</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Favoriler</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Teklif Sürecindekiler</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-handshake-o"></i> <span class="nav-label">Tamamlanmış İşlemler</span> </a></li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    <!--<form role="search" class="navbar-form-custom" method="post" action="#">
+                        <div class="form-group">
+                            <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                        </div>
+                    </form>--> <!-- anasayfa üzerinde arama yapmak mantıksız.-->
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+					<li> <!-- kb eklendi -->
+                        <a href="kimlik.html">
+                            <img alt="image" class="img-circle kb calisan_mini1" src="kb_img/kb_profil/profile_small.jpg" /><span class="kb uye_isim1">Ali AKTAŞ</span>
+                    </a>
+                    </li>
+                    <li> <!-- kb eklendi -->
+                        <a href="#">
+                            <i class="fa fa-cog"></i>
+                        </a>
+                    </li>
+					<li> <!-- logout yazısı silindi, sadece ikon yeterli, tool tip konulabilir. -->
+                        <a href="#">
+                            <i class="fa fa-sign-out"></i>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+        <div class="wrapper wrapper-content animated fadeInRight"><!-- bu bölüme yeni parca eklendi -->
+		<div class="row"> <!-- firma temel bilgiler satir baslangic -->
+                <div class="col-lg-12">
+
+                    <div class="ibox">
+                        <div class="ibox-content2">
+
+                            <div class="row">
+                                <div class="col-md-4">
+								<div class="kb f_kolon_sol1">
+
+                                 <div class="kb-firma_mini_logo_div1"><img alt="image" class="kb-firma_mini_logo1" src="kb_img/silinecek/acg.png"><i class="fa fa-gear"></i></div>
+								<div>
+								<form class="form-horizontal">
+								<div class="form-group"><label class="col-xs-4 control-label">Telefon</label>
+                                    <div class="col-xs-8"><input placeholder="Telefon" class="form-control" type="text" value="+903123850914"> </div>
+                                </div>      
+								<div class="form-group"><label class="col-xs-4 control-label">Email</label>
+                                    <div class="col-xs-8"><input placeholder="Email" class="form-control " type="email" value="sales@acgelektronik.com"></div>
+                                </div> 		
+								<div class="form-group"><label class="col-xs-4 control-label">Web</label>
+                                    <div class="col-xs-8"><input placeholder="Web Address" class="form-control" type="text" value="http://www.acgelektronik.com"></div>
+                                </div> 
+								<div class="form-group"><label class="col-xs-4 control-label">Vergi No</label>
+                                    <div class="col-xs-8"><input placeholder="Vergi No" class="form-control " type="text" value="005465713"></div>
+                                </div>
+								<div class="form-group"><label class="col-xs-4 control-label">Firma Şehri</label>
+                                    <div class="col-xs-8"><div class="input-group"><input class="form-control" type="text" value="Ankara"> <span class="input-group-btn"> <button type="button" class="btn btn-primary"><i class="fa fa-map-marker"></i>
+                                        </button> </span></div></div>
+                                </div>
+								<div class="form-group"><label class="col-xs-4 control-label">Firma Tipi</label>
+                                    <div class="col-xs-8"><select class="form-control m-b" name="account">
+                                        <option>Gerçek Kişi</option>
+                                        <option>Tüzel Kişi</option>
+                                    </select></div>
+                                </div>								
+     </form>								
+								</div>
+								
+                                </div>
+								</div>
+                                <div class="col-md-8">
+								<div class="kb f_bilgi_kutu1 kb-f_duzenle_kutu">
+								<div><span class="label label-primary">Uluslararası Firma Bilgileri</span> <span>(Sadece Latin Harfleri)</span></div>
+								<div>Firma Tam İsmi </div>
+                                        <input placeholder="Firma İsmi" class="form-control" type="text" value="ACG Makine Eleketrik Elektronik">
+                                  <div>Firma Kısa İsmi</div>
+								  <input placeholder="Firma Kısa İsmi" class="form-control" type="text" value="ACG Electronics">
+								  <div>Firma Adresi</div>
+								  <div class="row">				
+									<div class="col-md-6">
+									<input placeholder="Adres Satırı1" class="form-control" type="text" value="Dodurga Mh.">
+									<input placeholder="Adres Satırı2" class="form-control" type="text" value="Yeşilpark sitesi 58/3B">
+									<input placeholder="Posta Kodu" class="form-control" type="text" value="06370">
+									<div><span>Ankara</span>/<span>İç Anadolu Bölgesi</span>/<span>Türkiye</span></div>
+								</div>
+								<div class="col-md-6">
+								<div>E-Posta Ekle</div>
+								<div>Telefon Ekle</div>
+								</div>
+								</div>
+								</div>
+								<div class="kb f_bilgi_kutu1 kb-f_duzenle_kutu">
+								<div><span class="label label-primary">Yerel Firma Bilgileri</span> </div>
+								<div>Firma Tam İsmi (Legal)</div>
+                                        <input placeholder="Firma İsmi" class="form-control" type="text" value="ACG Makine Eleketrik Elektronik">
+                                  <div>Firma Kısa İsmi</div>
+								  <input placeholder="Firma Kısa İsmi" class="form-control" type="text" value="ACG Elektronik">
+								  <div>Firma Legal Adresi</div>
+								  <div class="row">				
+									<div class="col-md-6">
+									<input placeholder="Adres Satırı1" class="form-control" type="text" value="Dodurga Mh.">
+									<input placeholder="Adres Satırı2" class="form-control" type="text" value="Yeşilpark sitesi 58/3B">
+									<input placeholder="Posta Kodu" class="form-control" type="text" value="06370">
+										<div><span>Ankara</span>/<span>İç Anadolu Bölgesi</span>/<span>Türkiye</span></div>
+								</div>
+								<div class="col-md-6">
+								<div>E-Posta Ekle</div>
+								<div>Telefon Ekle</div>
+								</div>
+								</div>
+								</div>
+								
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div> <!-- firma temel bilgiler son-->
+		<!-- iletisim bilgileri kutusu -->
+		<div class="row kb f_bilgi_kutu1 kb-muhatap_duzenle">
+			<div class="col-md-12">Kobip sizinle aşağıdaki bilgiler ile bağlantı kuruyor</div>
+            <div class="col-md-4">
+			<div class="input-group m-b"><span class="input-group-addon"><i class="fa fa-user-circle"></i></span> <input placeholder="İletişim Yetkilisi" class="form-control" type="text" value="Ali AKTAŞ"></div>
+			</div>
+            <div class="col-md-4">
+			<div class="input-group m-b"><span class="input-group-addon"><i class="fa fa-at"></i></span> <input placeholder="Yetkilisi E-posta Adresi" class="form-control" type="email" value="aliaktas@gmail.com"></div>
+			</div>
+			<div class="input-group m-b"><span class="input-group-addon"><i class="fa fa-mobile-phone"></i></span> <input placeholder="Yetkilisi Telefon" class="form-control" type="email" value="+905422862455"></div>
+        </div>	
+		<!-- iletisim bilgileri kutusu son-->
+		<br>
+		<!--satınalma satırları -->
+		<div class="row">
+            <div class="col-lg-12 ">
+                <div class="ibox float-e-margins kb f_bilgi_kutu1">
+                    <div class="ibox-title">
+                        <h5>Satınalma Ayarları</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" >
+						<span class="label label-primary">Çok Kullanılan Birimler</span>
+								<div class="row show-grid kb birim1">
+                                    <div class="col-sm-2">Adet(ad)</div>
+                                    <div class="col-sm-2">Kilogram(kg)</div>
+                                    <div class="col-sm-2">Metre(m)</div>
+									<div class="col-sm-2">Santimetre(m)</div>
+                                    <div class="col-sm-2">Watt(W)</div>
+                                    <div class="col-sm-2">Kutu</div>
+                                </div>
+		<span class="label label-primary">Satınalma Yapılacak Ülkeler</span>
+                            <form id="form" action="#" class="wizard-big">
+                                <div class="bootstrap-duallistbox-container row moveonselect"> <div class="box1 col-md-6">   <label for="bootstrap-duallistbox-nonselected-list_" style="display: none;"></label>   <span class="info-container">     <span class="info">Showing all 11</span>     <button type="button" class="btn clear1 pull-right btn-default btn-xs">show all</button>   </span>   <input class="filter form-control" placeholder="Filter" type="text">   <div class="btn-group buttons">     <button type="button" class="btn moveall btn-default" title="Move all">       <i class="glyphicon glyphicon-arrow-right"></i>       <i class="glyphicon glyphicon-arrow-right"></i>     </button>     <button type="button" class="btn move btn-default" title="Move selected">       <i class="glyphicon glyphicon-arrow-right"></i>     </button>   </div>   <select multiple="multiple" id="bootstrap-duallistbox-nonselected-list_" class="form-control" name="_helper1" style="height: 162px;"><option value="United States">United States</option><option value="United Kingdom">United Kingdom</option><option selected="" value="Austria">Austria</option><option selected="" value="Bahamas">Bahamas</option><option value="Barbados">Barbados</option><option value="Belgium">Belgium</option><option value="Bermuda">Bermuda</option><option value="Brazil">Brazil</option><option value="Bulgaria">Bulgaria</option><option value="Cameroon">Cameroon</option><option value="Canada">Canada</option></select> </div> <div class="box2 col-md-6">   <label for="bootstrap-duallistbox-selected-list_" style="display: none;"></label>   <span class="info-container">     <span class="info">Showing all 1</span>     <button type="button" class="btn clear2 pull-right btn-default btn-xs">show all</button>   </span>   <input class="filter form-control" placeholder="Filter" type="text">   <div class="btn-group buttons">     <button type="button" class="btn remove btn-default" title="Remove selected">       <i class="glyphicon glyphicon-arrow-left"></i>     </button>     <button type="button" class="btn removeall btn-default" title="Remove all">       <i class="glyphicon glyphicon-arrow-left"></i>       <i class="glyphicon glyphicon-arrow-left"></i>     </button>   </div>   <select multiple="multiple" id="bootstrap-duallistbox-selected-list_" class="form-control" name="_helper2" style="height: 162px;"><option value="Australia" data-sortindex="7">Australia</option></select> </div></div><select class="form-control dual_select" multiple="" style="display: none;">
+                                    <option value="United States">United States</option>
+                                    <option value="United Kingdom">United Kingdom</option>
+                                    <option value="Australia" data-sortindex="7">Australia</option>
+                                    <option selected="" value="Austria">Austria</option>
+                                    <option selected="" value="Bahamas">Bahamas</option>
+                                    <option value="Barbados">Barbados</option>
+                                    <option value="Belgium">Belgium</option>
+                                    <option value="Bermuda">Bermuda</option>
+                                    <option value="Brazil">Brazil</option>
+                                    <option value="Bulgaria">Bulgaria</option>
+                                    <option value="Cameroon">Cameroon</option>
+                                    <option value="Canada">Canada</option>
+                                </select>
+                            </form>
+                    </div>
+    
+                </div>
+            </div>
+
+        </div>
+		<!-- satınalma satırları son -->
+		<br>
+		<!--satış satırları -->
+		<div class="row">
+            <div class="col-lg-12 ">
+                <div class="ibox float-e-margins kb f_bilgi_kutu1">
+                    <div class="ibox-title">
+                        <h5>Satış Ayarları</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" >
+	<span class="label label-primary">Satış Yapılacak Ülkeler</span>
+								<div class="row show-grid">
+                                    <div class="col-sm-4"><ul><li>Almanya</li><li>Türkiye</li></ul></div>
+                                    <div class="col-sm-4"><ul><li>Avusturya</li><li>İngiltere</li></ul></div>
+                                    <div class="col-sm-4"><ul><li>Amerika Birleşik Devletleri</li><li>Avustralya</li></ul></div>
+                                </div>
+                    </div>
+    
+                </div>
+            </div>
+
+        </div>
+		<!-- satış satırları son -->
+		
+		
+		
+            <!--<div class="row">
+                <div class="col-lg-12">
+                    <div class="text-center m-t-lg">
+                        <h1>
+                          KOBIP Static SeedProject
+                        </h1>
+                        <small>
+                            Kobip uye sayfa inşaası
+                        </small>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                <a href="#"> Geribildirim & İletişim </a>
+            </div>
+            <div>
+                <strong>Copyright</strong> KOBIP &copy; 2017
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="js/inspinia.js"></script>
+<script src="js/plugins/pace/pace.min.js"></script>
+
+
+</body>
+
+</html>

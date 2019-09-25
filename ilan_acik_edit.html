@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KOBIP | Satınalma Sayfa Görünümü</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<link href="css/ilanlar_liste.css" rel="stylesheet">
+	<link href="css/kb.css" rel="stylesheet"> <!-- kb eklendi -->
+	<script src="js/jquery-3.1.1.min.js"></script>
+<!-- filtre display script b-->
+    <script>
+        $(document).ready(function() {
+		
+		$("#sif-ackapa").click(function(){
+		$( this ).toggleClass("fa-caret-down");
+		$( this ).toggleClass("fa-caret-up");
+		$( ".sif-sag-menu" ).toggle();
+		});
+		
+	 // eger gizli filtre menüsünün dışınına tıklarsa menu kapanacak
+	$(document).mouseup(function(e) {
+			if (!(e.target.id == "sif-menu-panel" || $(e.target).closest("#sif-menu-panel").length) && $('.sif-sag-menu:visible').length) 
+				{
+						$("#sif-ackapa").trigger("click");
+				}
+	});
+		
+		
+		}); //dokuman ready son
+</script>
+<!-- filtre displat script s-->
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">  <!-- nav header kurali css'ten değistirildi -->
+                    <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear">
+							<span class="block"> <!-- bu bölümede orjinali  class="block m-t-xs" -->
+							<img class="kb uye_mini_logo1" src="kb_img/kb_ikon/logo.svg"> <!--  yeni stil yazıldı --> 
+							<strong class="kb nav_logo_kb_metin1 font-bold">KOBIP</strong>
+							</span>
+							<span class="text-muted text-xs block">Purchasing Network</b></span> <!-- karakter fazlası alt satıra geçiyor alt satıra geçmeyen kelimeler seçilmeli -->
+							</span>
+							</a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="#">Ayarlar</a></li>
+                            </ul>
+                    </div>
+                    <div class="logo-element">
+                        <img class="kb uye_mini_logo1" src="kb_img/kb_ikon/logo.svg"> <!--  yeni stil yazıldı --> 
+                    </div>
+                </li>
+				
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Firma Bilgileri</span></li>
+				
+                <li><a href="index.html"><i class="fa fa-building"></i> <span class="nav-label">Genel Bilgiler</span></a></li>
+                <li  class="active"><a href="partner.html"><i class="fa fa-suitcase"></i> <span class="nav-label">Partnerler</span> </a></li>
+				<li><a href="calisan.html"><i class="fa fa-group"></i> <span class="nav-label">Çalışanlar</span> </a></li>
+				<li><a href="kategori.html"><i class="fa fa-tags"></i> <span class="nav-label">Kategoriler</span> </a></li>
+				<li><a href="harcama.html"><i class="fa fa-bank"></i> <span class="nav-label">Harcamalar</span> </a></li>
+				
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Satınalma</span></li>
+				
+				 <li><a href="minor.html"><i class="fa fa-plus-square"></i> <span class="nav-label">Yeni Oluştur</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Taslak İlanlar</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th"></i> <span class="nav-label">İlan Listesi</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-check-square"></i> <span class="nav-label">Tamamlanmış İşlemler</span> </a></li>
+				  
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Satış</span></li>
+				
+				 <li><a href="minor.html"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Güncel İlanlar</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Favoriler</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Teklif Sürecindekiler</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-handshake-o"></i> <span class="nav-label">Tamamlanmış İşlemler</span> </a></li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+					<li> <!-- kb eklendi -->
+                        <a href="kimlik.html">
+                            <img alt="image" class="img-circle kb calisan_mini1" src="kb_img/kb_profil/profile_small.jpg" /><span class="kb uye_isim1">Ali AKTAŞ</span></i>
+                    </a>
+                    </li>
+                    <li> <!-- kb eklendi -->
+                        <a href="kimlik_duzenle.html">
+                            <i class="fa fa-cog"></i>
+                        </a>
+                    </li>
+					<li> <!-- logout yazısı silindi, sadece ikon yeterli, tool tip konulabilir. -->
+                        <a href="#">
+                            <i class="fa fa-sign-out"></i>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+
+		<!-- satınalma ilan baslangic -->
+ <div class="i10f">
+<div class="i20a">
+
+    <!-- Satınalma ilanı kutusu  mesaj bolumunu içermiyor-->
+    <div class="i20b">
+        <!--Başlık Bölümü-->
+        <div class="i21b">
+<span title="Tıklayın ve ilan başlığı girişi yapın">Seramik Tabanlı Düşük Termal Dirençli High Power LED Alımı</span>    
+        <div></div></div>
+        <div class="i22b"><i class="fa fa-bars"></i></div>
+		 <div class="i29b"><i class="fa fa-bookmark"></i></div>
+    </div>
+    <div class="i20c">
+	<div class="i21dc">TR-E4345TER4</div>
+        <div class="i20d">
+            <div>
+                <label title="Ürün Miktarı">150000</label><b title="Adet">Adet</b>
+            </div>
+            <div><i title="29/08/2017 17:28"><b>1</b> ay kaldı</i></div>
+        </div>
+		<div class="i21c" style="position:relative;"> <!-- Görsel için büyüyüp küçülen div -->
+		<div class="i28i"><div><img src="http://localhost:8080/kobip/3uye/3i/msi2a.jpg"><i class="fa fa-plus"></i></div></div>
+        <div class="i20e">
+            <div class="i21e">
+			<div class="i21e_m" style="display:none;">Açıklama metni yazınız.</div>  <!--metin görüntüleme kutusu -->
+			<div class="i21e_z"> <!--zengin metin kutusu -->
+			<div  class="i21e_z1"><img src="img/zengin_metin.png"><textarea rows="8" style="width:100%;">Exproof armatürlerimiz için kullanılmak üzere seramik tabanlı LED ihtiyacımız vardır.Termal direnci 8C yi geçmeyen 2A anlık akımlara dayanıklı LEDler arıyoruz.  Adet tek bir üretim için gereklidir yıllık alım miktarımız 600000 adedi bulmaktadır.Teklif edeceğiniz alternatif ürünler için mutlaka datasheet ve test raporlarını eklemelisiniz. Renk sıcaklığında kaymalar olmamalı ve bin seçimine izin verilmelidir.</textarea></div>
+			</div> <!--zengin metin kutusu son -->
+			</div>
+			<ul class="i23e" title="Teklifte tercih edilen marka ve modeller">
+			<li>CREE * CER24514SEW14TYERSDSDF <i class="fa fa-times"></i></li>
+			<li>Toshiba * Exter <i class="fa fa-times"></i></li>
+            </ul>
+			<div  class="i22ec">
+			<div  class="i22e">
+			<input class="i22x" placeholder="Marka" type="text"> <input class="i22x" placeholder="Model" type="text"> <input class="i22x" placeholder="Sipariş Kodu" type="text">
+			</div>
+			<div class="i22eb"><i class="fa fa-plus"></i></div>
+			</div>
+        </div>
+        <div class="i20f">
+            <div class="i20g"><i style="font-size:2.5em; margin: 0 10px  0 0;" title="Tercih Edilen Taşıma Şekilleri" class="fa fa-dropbox"></i><i style="font-size:1.5em; margin: 0 10px 0 0; color:#4384c1;" title="Karayolu ile Taşıma Yapılabilir." class="fa fa-truck"></i><i style="font-size:1.5em; margin: 0 10px 0 0; color:#4384c1;" title="Havayolu ile Taşıma Yapılabilir." class="fa fa-plane"></i>
+            </div>
+            <div class="i20h">
+                <div class="i21h">Ürün siparişi verildikten sonra <b>30 gün</b> içerisinde
+                    <label title="Mal Bedeli, Sigorta ve Navlun Ödenmiş Olarak Risk transferi noktası olarak geminin küpeştesinin dikkate alınması">COF</label>, <label title="Gemiye Yükleyerek ( Küpeştesinden geçmiş ) Teslim">FOB</label>
+                    şeklinde teslim edilmesi beklenmektedir.</div>
+                <div class="i22h">
+                    <span><b>"</b><i>Teslimat Notu - Ürünler kesinlike taşıma sırasında zarar görmeyecek şekilde paketlenmelidir.</i><b>"</b></span></div>
+            </div>
+        </div>
+		</div><!-- Görsel için büyüyüp küçülen div SON -->
+        <div class="i20i i25i">
+		
+            <div class="i21i">
+                <div><img src="img/msi1.jpg"></div>
+                <a><i class="fa fa-plus"></i></a>
+            <!--    <a><img src="3i/msi3.jpg"></a>
+                <a><img src="3i/msi4.jpg"></a> -->
+            </div>
+            <div class="i22i">
+<div ><span>deneme dosyası-LT2885</span>
+          <div class="i50j_2"><span>PDF</span></div>
+	</div>
+	
+<a><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+			
+			
+			
+<!-- deneme bölümü -->
+
+		<!-- satınalma ilan son -->
+	
+
+
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="js/inspinia.js"></script>
+<script src="js/plugins/pace/pace.min.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KOBIP | Satınalma Sayfa Görünümü</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<link href="css/ilanlar_liste.css" rel="stylesheet">
+	<link href="css/kb.css" rel="stylesheet"> <!-- kb eklendi -->
+	<script src="js/jquery-3.1.1.min.js"></script>
+<!-- filtre display script b-->
+    <script>
+        $(document).ready(function() {
+		
+		$("#sif-ackapa").click(function(){
+		$( this ).toggleClass("fa-caret-down");
+		$( this ).toggleClass("fa-caret-up");
+		$( ".sif-sag-menu" ).toggle();
+		});
+		
+	 // eger gizli filtre menüsünün dışınına tıklarsa menu kapanacak
+	$(document).mouseup(function(e) {
+			if (!(e.target.id == "sif-menu-panel" || $(e.target).closest("#sif-menu-panel").length) && $('.sif-sag-menu:visible').length) 
+				{
+						$("#sif-ackapa").trigger("click");
+				}
+	});
+		
+		
+		}); //dokuman ready son
+</script>
+<!-- filtre displat script s-->
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">  <!-- nav header kurali css'ten değistirildi -->
+                    <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear">
+							<span class="block"> <!-- bu bölümede orjinali  class="block m-t-xs" -->
+							<img class="kb uye_mini_logo1" src="kb_img/kb_ikon/logo.svg"> <!--  yeni stil yazıldı --> 
+							<strong class="kb nav_logo_kb_metin1 font-bold">KOBIP</strong>
+							</span>
+							<span class="text-muted text-xs block">Purchasing Network</b></span> <!-- karakter fazlası alt satıra geçiyor alt satıra geçmeyen kelimeler seçilmeli -->
+							</span>
+							</a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="#">Ayarlar</a></li>
+                            </ul>
+                    </div>
+                    <div class="logo-element">
+                        <img class="kb uye_mini_logo1" src="kb_img/kb_ikon/logo.svg"> <!--  yeni stil yazıldı --> 
+                    </div>
+                </li>
+				
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Firma Bilgileri</span></li>
+				
+                <li><a href="index.html"><i class="fa fa-building"></i> <span class="nav-label">Genel Bilgiler</span></a></li>
+                <li  class="active"><a href="partner.html"><i class="fa fa-suitcase"></i> <span class="nav-label">Partnerler</span> </a></li>
+				<li><a href="calisan.html"><i class="fa fa-group"></i> <span class="nav-label">Çalışanlar</span> </a></li>
+				<li><a href="kategori.html"><i class="fa fa-tags"></i> <span class="nav-label">Kategoriler</span> </a></li>
+				<li><a href="harcama.html"><i class="fa fa-bank"></i> <span class="nav-label">Harcamalar</span> </a></li>
+				
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Satınalma</span></li>
+				
+				 <li><a href="minor.html"><i class="fa fa-plus-square"></i> <span class="nav-label">Yeni Oluştur</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Taslak İlanlar</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th"></i> <span class="nav-label">İlan Listesi</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-check-square"></i> <span class="nav-label">Tamamlanmış İşlemler</span> </a></li>
+				  
+				<li class="kb nav_menu_grup_baslik1"><span class="nav-label">Satış</span></li>
+				
+				 <li><a href="minor.html"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Güncel İlanlar</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Favoriler</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-th-large"></i> <span class="nav-label">Teklif Sürecindekiler</span> </a></li>
+				 <li><a href="minor.html"><i class="fa fa-handshake-o"></i> <span class="nav-label">Tamamlanmış İşlemler</span> </a></li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+					<li> <!-- kb eklendi -->
+                        <a href="kimlik.html">
+                            <img alt="image" class="img-circle kb calisan_mini1" src="kb_img/kb_profil/profile_small.jpg" /><span class="kb uye_isim1">Ali AKTAŞ</span></i>
+                    </a>
+                    </li>
+                    <li> <!-- kb eklendi -->
+                        <a href="kimlik_duzenle.html">
+                            <i class="fa fa-cog"></i>
+                        </a>
+                    </li>
+					<li> <!-- logout yazısı silindi, sadece ikon yeterli, tool tip konulabilir. -->
+                        <a href="#">
+                            <i class="fa fa-sign-out"></i>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+                <div class="kb-filtre">
+						<!--satış ilan liste filtreleme baslangic -->
+					<div class="row satis-liste">
+											
+											<!-- partner ismi görünmeycek ancak partnerinden olduğunu bilecek -->
+                                            <div class="col-md-6">
+												<div class="sif-input">
+													<input class="filtre-genel-input" placeholder="ilan metinleri içinde ara" type="text">
+													<div><i id="sif-ackapa" class="fa fa-caret-down"></i></div>
+												</div>
+												<div  id="sif-menu-panel" style="display:none" class="sif-sag-menu">
+												<!--   ilan menu-->
+												<div>
+												<div>Kategori Seç</div>
+												<div>
+												<select class="filtre-genel-input sif-kategori" name="category" title="İlan kategori filtresi">
+												<option>Bilgisayar>Donanim</option>
+												<option>Otomotiv>Yedek Parça</option>
+												<option>Aydınlatma>Endüstriyel</option>
+												<option>Mobilya>Salon</option>
+												</select>
+												<i class="fa fa-flag" title="Seçeneği Sabitle"></i>
+												</div>
+											</div>
+                                            <div>
+												<div>Ürün Kodu ile Ara</div>
+												<div>
+												<input class="filtre-genel-input saf-urun-kodu" placeholder="Ürün Kodu Girişi" type="text">
+												</div>										
+												
+											</div>
+											<div class="sif-gorunmez-ilan"><label><input type="checkbox" name="checkbox" value="value"> Sadece Tamamlanmış İlanları Listele</label></div>
+											<div class="sif-gorunmez-ilan"><label><input type="checkbox" name="checkbox" value="value"> Sadece Silinmiş İlanları Listele</label></div>
+											
+											<div><div style="float:right; background-color:#eee; width:120px; padding:3px; border-radius: 3px;"><i class="fa fa-search"></i><span class="bold">Filtrele</span></div></div>
+												
+												</div>
+												</div>
+                                            <div class="col-md-6">
+											
+												<div>
+													<div class="satis-filtre-ikon-l">
+														<i class="fa fa-sort-numeric-desc" title="Miktar çoktan aza sıralama"></i>
+														<i class="fa fa-calendar" title="Son Teklif tarihi yakından ileri tarihe sıralama"></i>
+														<i class="fa fa-handshake-o" title="Tokalaşma Olan Teklifler"></i>
+													</div>
+												</div>
+												
+												<div class="satis-filtre-ikon-r">
+														<i class="fa fa-eraser" title="Filtreleri Sil"></i>
+												</div>
+					
+											</div>
+                     </div>
+								<!--satış ilan liste filtreleme son-->
+            </div>
+
+			
+        <div class="ilan_tahtasi"><!-- bu bölüme yeni parca eklendi -->
+
+		<!-- satınalma ilan satırları baslangic -->
+<div class="ilan">
+                <div class="x"  style="border-top: 3px solid coral;">
+<div class="xt"><span title="İlan Numarası">E4345TER4</span><div class="durum">YAYINDA</div></div>
+                    <a class="xa" href="#">
+<p class="baslik"  title="Toshiba Laptop BC234224">[Yayında İlan] Toshiba Laptop BC234224  256GB SSD I7 İşlemci oshiba Laptop BC234224  256GB SSD I7 İşlemci </p>
+</a></div>
+				<div class="y">
+				
+					<div class="v">
+						<div class="v5">15000 ADET
+						</div>
+					</div>
+					
+                    <div class="z flex-orta kb-vmt">
+                        <div class="z-view"><i class="fa fa-eye" title="View Count"></i><div>150</div></div>
+                        <div class="z-msj"><i class="fa fa-envelope" title="Messages"></i><div>20</div></div>
+						<div class="z-teklif"><i class="fa fa-file-text" title="Quotes"></i><div>0</div></div>
+                    </div>
+
+                    <div class="q">
+						
+						
+						<div class="ilan-ikonlar flex-orta">
+						<i class="fa fa-trash" title="İlanı Silmek İçin Tıklayınız"></i>
+						<i class="fa fa-calendar" title="Son teklif Tarihi: 09/12/2017 17:00"></i>
+                        <i class="fa fa-language" title="Türkçe*/İngilizce/Fransızca"></i>  
+						<i class="fa fa-picture-o" title="İlan Görseli"></i>
+						</div>
+
+                    </div>
+
+                </div>
+</div>
+
+
+
+
+
+<div class="ilan">
+                <div class="x" style="border-top: 3px solid #3D9970;">
+<div class="xt"><span title="İlan Numarası">KM345TER4</span><div class="durum" style="background-color:#3D9970;">TAMAMLANMIŞ</div></div>
+                    <a class="xa" href="#">
+<p class="baslik" title="M8 torks başlı galvanizli vida">[Tamamlanmış İlan]  M8 torks başlı galvanizli vida</p>
+</a></div>
+				<div class="y">
+					<div class="v">
+						<div class="v5">100 KİLOGRAM
+						</div>
+					</div>
+				
+                    <div class="z flex-orta kb-vmt">
+                        <div class="z-view"><i class="fa fa-eye" title="View Count"></i><div>3870</div></div>
+                        <div class="z-msj"><i class="fa fa-envelope" title="Messages"></i><div>375</div></div>
+						<div class="z-teklif"><i class="fa fa-file-text" title="Quotes"></i><div>20</div></div>
+                    </div>
+
+                    <div class="q">
+						<div class="ilan-ikonlar flex-orta">
+						<i class="fa fa-trash" title="İlanı Silmek İçin Tıklayınız"></i>
+						<i class="fa fa-calendar" title="Son teklif Tarihi: 09/12/2017 17:00"></i>
+						<i class="fa fa-language" title="Türkçeye otomatik çeviri"></i> 
+						<i class="fa fa-picture-o" style="color:#d86a6a;" title="İlan Görseli Yok"></i>			
+						</div>
+                    </div>
+
+                </div>
+</div>
+
+
+
+<div class="ilan">
+                <div class="x" style="border-top: 3px solid #d86a6a;">
+<div class="xt"><span title="İlan Numarası">AA45TER46</span><div class="durum" style="background-color:#d86a6a;">SİLİNMİŞ</div></div>
+                    <a class="xa" href="#">
+<p class="baslik" title="Antifriz">[Silinmiş İlan]  Antifriz</p>
+</a></div>
+				<div class="y">
+					<div class="v">
+						<div class="v5">1 ADET
+						</div>
+					</div>
+					
+                    <div class="z flex-orta kb-vmt">
+                        <div class="z-view"><i class="fa fa-eye" title="View Count"></i><div>50</div></div>
+                        <div class="z-msj"><i class="fa fa-envelope" title="Messages"></i><div>10</div></div>
+						<div class="z-teklif"><i class="fa fa-file-text" title="Quotes"></i><div>1</div></div>
+                    </div>
+
+                    <div class="q">
+						
+						
+						<div class="ilan-ikonlar flex-orta">
+						<i class="fa fa-trash"  style="color:#d86a6a;" title="Bu İlan Silinmiş"></i>
+						<i class="fa fa-calendar" title="Son teklif Tarihi: 09/12/2017 17:00"></i>
+						<i class="fa fa-language" title="Türkçeye otomatik çeviri"></i>  
+						<i class="fa fa-picture-o" title="İlan Görseli"></i>
+						</div>
+
+                    </div>
+
+                </div>
+</div>
+
+
+
+
+
+
+
+<div class="ilan">
+                <div class="x" style="border-top: 3px solid #ccc;">
+<div class="xt"><span title="İlan Numarası">E4345TER4</span><div class="durum" style="background-color:#ccc;">SÜRESİ DOLMUŞ</div></div>
+                    <a class="xa" href="#">
+<p class="baslik" title="Toshiba Laptop BC234224">[Yayın Süresi Dolmuş İlan] Toshiba Laptop BC234224  256GB SSD I7 İşlemci </p>
+</a></div>
+				<div class="y">
+				
+					<div class="v">
+						<div class="v5">10 TON
+						</div>
+					</div>
+					
+                    <div class="z flex-orta kb-vmt">
+                        <div class="z-view"><i class="fa fa-eye" title="View Count"></i><div>80</div></div>
+                        <div class="z-msj"><i class="fa fa-envelope" title="Messages"></i><div>20</div></div>
+						<div class="z-teklif"><i class="fa fa-file-text" title="Quotes"></i><div>2</div></div>
+                    </div>
+
+                    <div class="q">
+						
+						
+						<div class="ilan-ikonlar flex-orta">
+						<i class="fa fa-trash" title="İlanı Silmek İçin Tıklayınız"></i>
+						<i class="fa fa-calendar" title="Son teklif Tarihi: 09/12/2017 17:00"></i>
+                        <i class="fa fa-language" title="Türkçe*/İngilizce/Fransızca"></i>  
+						<i class="fa fa-picture-o" title="İlan Görseli"></i>
+						</div>
+
+                    </div>
+
+                </div>
+</div>
+		<!-- satınalma ilan satırları son -->
+	
+
+
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                <a href="#"> Geribildirim & İletişim </a>
+            </div>
+            <div>
+                <strong>Copyright</strong> KOBIP &copy; 2017
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="js/inspinia.js"></script>
+<script src="js/plugins/pace/pace.min.js"></script>
+
+
+</body>
+
+</html>

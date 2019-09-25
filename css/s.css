@@ -1,0 +1,297 @@
+html, body {
+	height: 100%;
+}
+body {
+	color: #676a6c;
+	font-family: 'Open Sans', helvetica, arial, sans-serif;
+	font-size: 1em;
+	background-color: #fff;
+	padding:0;
+	margin:0;
+}
+a {
+	cursor: pointer; 
+	text-decoration: none;
+}
+.ortala { text-align:center; }
+/*Tepe navigasyon ve menü bari baslangic*/
+.navbar {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 200;
+}
+.navbar>nav { /*fix the navbar at top*/
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+}
+.navbar-feat {
+	min-height: 50px;
+	margin-bottom: 20px;
+	background-color: transparent;
+	border-color: transparent;
+	transition: all 0.3s ease-in-out 0s;
+}
+
+.navbar .container {
+	overflow: hidden;
+	margin-right: auto;
+	margin-left: auto;
+}
+ .navbar .container { /*telefon ekranlarına göre ayarlanacak*/
+	width: 1200px;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+.navbar-kobip {
+	float: left;
+	padding: 15px 15px;
+	line-height: 20px;
+}
+
+.navbar-kobip>a {height: auto; float: left;}
+.navbar-logo>div {display:inline-block;}
+.navbar-logo>div:first-child{vertical-align:top;}
+.navbar-logo>div:last-child{margin-left:5px; color:#fafafa;}
+.navbar-logo>div:last-child>div:first-child{font-size:1.75em; font-weight: 700; font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;}
+.navbar-logo>div:last-child>div:last-child{font-weight:normal; font-size:0.8em; padding:4px 0 0 0;}
+
+.navbar-menu>ul {
+	float: right;
+	list-style: none;
+	}
+.navbar-menu>ul>li {
+	float: left; 
+	position: relative;
+}
+
+
+
+.navbar-menu>ul>li>a {
+	color:#fafafa;
+	font-family: 'Open Sans', helvetica, arial, sans-serif;
+	font-weight: 700;
+}
+.navbar-menu>ul>li>a:hover { color:#dadada;}
+  /*telefon ekranlarına göre ayarlanacak*/
+.navbar-menu>ul>li>a {
+	letter-spacing: 1px;
+	font-size: 1.1em;
+	padding: 0 10px;
+}
+
+ i.kb-dil {
+	background:url(../img/ikon/dil.svg) center right no-repeat;
+	padding:15px;
+	white-space:nowrap;
+	}
+/*Scroll indirildiğinde aktif*/	
+.navbar-feat.navbar-scroll {
+  background-color: #ddd;
+  padding: 2px 0;
+  border-bottom: 1px solid #e7eaec;
+  border-radius: 0;
+}
+.navbar-feat.navbar-scroll .navbar-menu>ul>li>a  {color:#333;} /*sag menu rengi*/
+.navbar-feat.navbar-scroll .navbar-logo>div:last-child{ color:#333;}
+
+/*Tepe navigasyon ve menü bari son*/
+
+/*Slider ve Örnek İlan Bölümü baslangic*/
+  /*telefon ekranlarına göre ayarlanacak*/
+.kb-slider { height: 470px; }
+
+.slide {height:100%; width:100%;} 
+
+.slide-bg1 {
+	background: #a9af9e;
+	background: -moz-radial-gradient(center, ellipse cover, #a9af9e 0%, #a9af9e 9%, #7b8273 100%);
+	background: -webkit-radial-gradient(center, ellipse cover, #a9af9e 0%,#a9af9e 9%,#7b8273 100%);
+	background: radial-gradient(ellipse at center, #a9af9e 0%,#a9af9e 9%,#7b8273 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a9af9e', endColorstr='#7b8273',GradientType=1 );
+}
+/*Slider ve Örnek İlan Bölümü  son*/
+
+/*Section genel ayarları baslangic*/
+.kb-bar {
+  width: 60px;
+  height: 1px;
+  margin: 60px auto 0;
+  border-bottom: 2px solid #1ab394;
+}
+.kb-section h1 {
+	margin: 10px 0;
+	line-height:1em;
+	font-size: 1.85em;
+	font-weight: 200;
+}
+.kb-section p {
+	color: #aeaeae;
+	font-size: 0.8em;
+	margin: 0 10px 0;
+	padding: 0 5px;
+}
+.kb-section .mavi {
+	  color: #1ab394;
+} 
+/*Section genel ayarları son*/
+
+/* Avantajlar bölümü başlangic*/
+.adv-general, .adv-features{
+	margin: 30px 0 0 0;
+}
+.adv-com {
+	text-align:center; display:inline-block; vertical-align:middle;
+}
+.adv-com h2 {
+	margin: 10px 0;
+	font-size: 1em;
+	font-weight: 200;
+}
+.adv-com>div {padding: 10px 0;}
+		/*adv bölümü ekran boyutuna göre değişecek  b*/
+.adv3-left { width:25%;}
+.adv3-middle{width:49%;}
+.adv3-right {width:25%;}
+
+.adv2-left { width:49%;}
+.adv2-right {width:49%;}
+		/*adv bölümü ekran boyutuna göre değişecek  s*/
+.feat-list {
+	text-align:left;
+	font-size:0.8em;
+	color:#999;
+}
+.feat-list>ul {
+	padding-top:0;
+	margin-top:0;
+}
+.feat-list>ul>li { line-height:1.6em;}
+/* Avantajlar bölümü Son*/
+/*Fiyatlandırma b*/
+.kb-pbc{}
+.kb-pbc>div { display:inline-block; width:33%;}
+.kb-pbc>div>ul {
+	list-style: none;
+	margin: 20px 30px 0 30px;
+	border-radius: 4px;
+	padding-left: 0;
+}
+
+.kb-pbc>div>ul>li {
+padding: 10px 16px;
+border-top: 1px solid #e7eaec;
+text-align: center;
+color: #aeaeae;
+}
+
+
+li.pricing-title {
+	background: #1ab394;
+	color: #fff !important;
+	padding: 10px;
+	border-radius: 4px 4px 0 0;
+	font-size: 22px;
+	font-weight: 600;
+	border-top: 1px solid #e7eaec;
+	text-align: center;
+}
+
+li.pricing-desc{
+font-size: 0.85em;
+border-top: none;
+padding: 20px 16px;
+}
+/*Fiyatlandırma s*/
+/*Ekran boyut test*/
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+  /* Styles */
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen 
+and (min-width : 321px) {
+  /* Styles */
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 320px) {
+  /* Styles */
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) {
+  /* Styles */
+  
+
+}
+
+/* iPads (landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : landscape) {
+  /* Styles */
+}
+
+/* iPads (portrait) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : portrait) {
+  /* Styles */
+}
+
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1224px) {
+  /* Styles */
+
+}
+
+/* Large screens ----------- */
+@media only screen 
+and (min-width : 1824px) {
+  /* Styles */
+}
+
+/* iPhone 4 - 5s ----------- */
+@media
+only screen and (-webkit-min-device-pixel-ratio : 1.5),
+only screen and (min-device-pixel-ratio : 1.5) {
+  /* Styles */
+}
+
+/* iPhone 6 ----------- */
+@media
+only screen and (max-device-width: 667px) 
+only screen and (-webkit-device-pixel-ratio: 2) {
+  /* Styles */
+}
+
+/* iPhone 6+ ----------- */
+@media
+only screen and (min-device-width : 414px) 
+only screen and (-webkit-device-pixel-ratio: 3) {
+  /*** You've spent way too much on a phone ***/
+}
+
+/* Samsung Galaxy S7 Edge ----------- */
+@media only screen
+and (-webkit-min-device-pixel-ratio: 3)
+and (min-resolution: 192dpi)and max-width:640px) {
+  background-image: url('https://i.ytimg.com/vi/zhBxfNm3rJE/maxresdefault.jpg');
+}
+
+
+/*Ekran boyut test son*/

@@ -1,0 +1,123 @@
+﻿
+Bu bölüm yeme içme  tarımsal faliyetlerler ve doğa ile ilgili ürün ve hizmetleri kapsar.
+
+1-) İşlenmiş Gıda
+2-) İçecekler
+3-) Tarım
+4-) Ormancılık (forestry)
+5-) Hayvancılık - Animal_Husbandry.xmind
+6-) Su Ürünleri
+7-) Kara Avcılık
+8-) Böcekler
+9-) Tarım, Hayvancılık ve Su Ürünleri Ekipman (Bu bölüm hem genel alanların içine hem de genel üretim makine ekipmana konulacak.)
+10-) Evcil Hayvanlar
+11-) Çiçekçilik ve Süs Bitkileri
+12-) Tütün ve Alkol Ürünleri
+
+
+Bu bölüm elektrik ve elektroniğin  temel alanlanlarını kapsar
+
+13-) Elektronik Parça/Modül
+	-Yarıiletkenler
+	-Pasif Parçalar
+	-Konnektör ve Terminaller
+	-Modüller
+		-Güç Elektroniği
+		-Devre Koruması
+		-RF Modüller
+		-Wireless Modüller
+		-Geliştirici Kartları
+		-Programlayıcı Kartlar
+	-Sensörler - Sensors.xmind
+	-PCB/Stencil & Assembly - PCB_Stencil_Assembly.xmind
+	-Elektromekanik Parça/Modül
+		-Hoparlör
+		-Fanlar
+		-Electric Motors - Electric_Motors.xmind
+		-Switches - Switches.xmind
+		-Röleler
+		-Electrical/ThermoElectric/Magnetic Actuators - Electrical_ThermoElectric_Magnetic_Actuators.xmind
+				
+
+				
+				
+				
+14-) Endüstriyel Elektronik Cihaz
+15-) Tüketici Elektroniği
+16-) Elektrik ve Tesisat
+
+
+Bu bölüm Yaşam alanlarının inşaatsı ve ekipmanlarını kapsar.
+
+17-) İnşaat (Su Tesisat, Elektrik Tesisat)
+18-) Mobilya
+19-) Bahçe ve Açık Alan
+20-) Ev Aksesuar Gereçleri
+21-) Aydınlatma -Lighting.xmap
+22-) Isıtma ve Soğutma Sistemleri
+23-) Mutfak Gereçleri
+24-) Eğitim ve Ofis Ekipman
+25-) Temizlik Gereçleri
+
+Hareketli araçları kapsar.
+
+26-) Kara Araçları
+27-) Deniz Araçları
+28-) Hava Araçları
+29-) Raylı Sistemler
+30-) Savunma Sanayi
+31-) Uzay Sanayii
+
+Bu bölüm kişisel giyim ve ev tekstilini kapsar.
+
+32-) Tekstil Yarı Mamul
+33-) Giyim & Ayakkabı -Clothing.xmap
+34-) Giyim Aksesuar
+35-) Mücevher, Takı ve Saat
+37-) Ev Tekstili -Home_Textile.xmind
+
+Bu bölüm kişisel bakm bölümünü kapsar.
+
+38-) Spor
+39-) Kozmetik ve Kişisel Bakım
+40-) Medikal
+41-) Bebek ve Çocuk
+
+Bu bölüm sanatsal ve eğlenceli faaliyetler bölümlerini kapsar.
+
+42-) Sanat
+43-) Hobi Gereçleri
+44-) Oyuncak ve Oyunlar
+
+Bu bölüm yazılımı kapsar
+45-) Yazılım
+
+
+Bu Bölüm üretim ve üretimde kullanılan bütün ekipmanları ve makineleri kapsar. 
+
+46-) Makine, Ekipmanları, Consumables 	> Genel Amaçlı
+					> Sektörel > Paketleme
+						   > Tekstil 
+47-) 
+48-) Endüstriyel Parçalar
+	-Aktüatör
+		-Elektrikli
+		-Mekanik
+		-Pnömatik
+		-Hidrolik
+		-Termal
+
+/*
+Vacuum Grippers
+Pneumatic Grippers
+Hydraulic Grippers
+Servo-Electric Grippers
+Magnetic Grippers
+
+*/
+Bu Bölüm doğadan elde edilen ya da suni üretilen inorganik hammadeleri kapsar.
+
+49-) Yakıtlar (Petrol/ Benzin - Mazot ve türevleri, Doğalgaz, Bitki Gazları vsvs)
+50-) Kimyasallar, Plastik ve Kauçuk (Yapıştırıcılar, Bantlar, Termal Macunlar)
+51-) Ham ve İşlenmiş Madenler
+
